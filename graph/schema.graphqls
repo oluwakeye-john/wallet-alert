@@ -1,0 +1,33 @@
+input SubscriptionInput {
+  address: String!
+  email: String!
+  name: String!
+  currency_code: CurrencyCode!
+}
+
+enum CurrencyCode {
+  BTC
+  ETH
+  LTC
+  DOGE
+  DASH
+}
+
+type Currency {
+  code: CurrencyCode!
+  name: String!
+}
+
+type SubscriptionStatus {
+  is_subscribed: Boolean!
+}
+
+type Query {
+  supportedCurrencies: [Currency!]!
+  getSubscriptionStatus(email: String!): SubscriptionStatus!
+}
+
+type Mutation {
+  createSubscription(input: SubscriptionInput!): SubscriptionStatus!
+  cancelSubscription(address: String!): SubscriptionStatus!
+}
