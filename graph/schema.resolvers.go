@@ -5,27 +5,26 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/oluwakeye-john/wallet-alert/graph/generated"
 	"github.com/oluwakeye-john/wallet-alert/graph/model"
 	"github.com/oluwakeye-john/wallet-alert/handlers"
 )
 
-func (r *mutationResolver) CreateSubscription(ctx context.Context, input model.SubscriptionInput) (*model.SubscriptionStatus, error) {
+func (r *mutationResolver) CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput) (*model.SubscriptionStatus, error) {
 	return handlers.CreateSubscription(ctx, input)
 }
 
-func (r *mutationResolver) CancelSubscription(ctx context.Context, address string) (*model.SubscriptionStatus, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) CancelSubscription(ctx context.Context, input model.CancelSubscriptionInput) (*model.SubscriptionStatus, error) {
+	return handlers.CancelSubscription(ctx, input)
 }
 
 func (r *queryResolver) SupportedCurrencies(ctx context.Context) ([]*model.Currency, error) {
 	return handlers.GetSupportedCurrencies(ctx)
 }
 
-func (r *queryResolver) GetSubscriptionStatus(ctx context.Context, email string) (*model.SubscriptionStatus, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) GetSubscriptionStatus(ctx context.Context, input model.GetStatusInput) (*model.SubscriptionStatus, error) {
+	return handlers.GetSubscriptionStatus(ctx, input)
 }
 
 // Mutation returns generated.MutationResolver implementation.

@@ -49,12 +49,12 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CancelSubscription func(childComplexity int, address string) int
-		CreateSubscription func(childComplexity int, input model.SubscriptionInput) int
+		CancelSubscription func(childComplexity int, input model.CancelSubscriptionInput) int
+		CreateSubscription func(childComplexity int, input model.CreateSubscriptionInput) int
 	}
 
 	Query struct {
-		GetSubscriptionStatus func(childComplexity int, email string) int
+		GetSubscriptionStatus func(childComplexity int, input model.GetStatusInput) int
 		SupportedCurrencies   func(childComplexity int) int
 	}
 
@@ -64,12 +64,12 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateSubscription(ctx context.Context, input model.SubscriptionInput) (*model.SubscriptionStatus, error)
-	CancelSubscription(ctx context.Context, address string) (*model.SubscriptionStatus, error)
+	CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput) (*model.SubscriptionStatus, error)
+	CancelSubscription(ctx context.Context, input model.CancelSubscriptionInput) (*model.SubscriptionStatus, error)
 }
 type QueryResolver interface {
 	SupportedCurrencies(ctx context.Context) ([]*model.Currency, error)
-	GetSubscriptionStatus(ctx context.Context, email string) (*model.SubscriptionStatus, error)
+	GetSubscriptionStatus(ctx context.Context, input model.GetStatusInput) (*model.SubscriptionStatus, error)
 }
 
 type executableSchema struct {
@@ -111,7 +111,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CancelSubscription(childComplexity, args["address"].(string)), true
+		return e.complexity.Mutation.CancelSubscription(childComplexity, args["input"].(model.CancelSubscriptionInput)), true
 
 	case "Mutation.createSubscription":
 		if e.complexity.Mutation.CreateSubscription == nil {
@@ -123,7 +123,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateSubscription(childComplexity, args["input"].(model.SubscriptionInput)), true
+		return e.complexity.Mutation.CreateSubscription(childComplexity, args["input"].(model.CreateSubscriptionInput)), true
 
 	case "Query.getSubscriptionStatus":
 		if e.complexity.Query.GetSubscriptionStatus == nil {
@@ -135,7 +135,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetSubscriptionStatus(childComplexity, args["email"].(string)), true
+		return e.complexity.Query.GetSubscriptionStatus(childComplexity, args["input"].(model.GetStatusInput)), true
 
 	case "Query.supportedCurrencies":
 		if e.complexity.Query.SupportedCurrencies == nil {
@@ -215,11 +215,20 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/schema.graphqls", Input: `input SubscriptionInput {
+	{Name: "graph/schema.graphqls", Input: `input CreateSubscriptionInput {
   address: String!
   email: String!
-  name: String!
   currency_code: CurrencyCode!
+}
+
+input CancelSubscriptionInput {
+  email: String!
+  address: String!
+}
+
+input GetStatusInput {
+  email: String!
+  address: String!
 }
 
 enum CurrencyCode {
@@ -241,12 +250,12 @@ type SubscriptionStatus {
 
 type Query {
   supportedCurrencies: [Currency!]!
-  getSubscriptionStatus(email: String!): SubscriptionStatus!
+  getSubscriptionStatus(input: GetStatusInput!): SubscriptionStatus!
 }
 
 type Mutation {
-  createSubscription(input: SubscriptionInput!): SubscriptionStatus!
-  cancelSubscription(address: String!): SubscriptionStatus!
+  createSubscription(input: CreateSubscriptionInput!): SubscriptionStatus!
+  cancelSubscription(input: CancelSubscriptionInput!): SubscriptionStatus!
 }
 `, BuiltIn: false},
 }
@@ -259,25 +268,25 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_cancelSubscription_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["address"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg0 model.CancelSubscriptionInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCancelSubscriptionInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐCancelSubscriptionInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["address"] = arg0
+	args["input"] = arg0
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_createSubscription_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.SubscriptionInput
+	var arg0 model.CreateSubscriptionInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNSubscriptionInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐSubscriptionInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCreateSubscriptionInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐCreateSubscriptionInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -304,15 +313,15 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_getSubscriptionStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["email"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg0 model.GetStatusInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNGetStatusInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐGetStatusInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["email"] = arg0
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -449,7 +458,7 @@ func (ec *executionContext) _Mutation_createSubscription(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateSubscription(rctx, args["input"].(model.SubscriptionInput))
+		return ec.resolvers.Mutation().CreateSubscription(rctx, args["input"].(model.CreateSubscriptionInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -491,7 +500,7 @@ func (ec *executionContext) _Mutation_cancelSubscription(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CancelSubscription(rctx, args["address"].(string))
+		return ec.resolvers.Mutation().CancelSubscription(rctx, args["input"].(model.CancelSubscriptionInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -568,7 +577,7 @@ func (ec *executionContext) _Query_getSubscriptionStatus(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetSubscriptionStatus(rctx, args["email"].(string))
+		return ec.resolvers.Query().GetSubscriptionStatus(rctx, args["input"].(model.GetStatusInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1813,8 +1822,39 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputSubscriptionInput(ctx context.Context, obj interface{}) (model.SubscriptionInput, error) {
-	var it model.SubscriptionInput
+func (ec *executionContext) unmarshalInputCancelSubscriptionInput(ctx context.Context, obj interface{}) (model.CancelSubscriptionInput, error) {
+	var it model.CancelSubscriptionInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "address":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
+			it.Address, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreateSubscriptionInput(ctx context.Context, obj interface{}) (model.CreateSubscriptionInput, error) {
+	var it model.CreateSubscriptionInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -1838,19 +1878,42 @@ func (ec *executionContext) unmarshalInputSubscriptionInput(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "currency_code":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency_code"))
 			it.CurrencyCode, err = ec.unmarshalNCurrencyCode2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐCurrencyCode(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputGetStatusInput(ctx context.Context, obj interface{}) (model.GetStatusInput, error) {
+	var it model.GetStatusInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "address":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
+			it.Address, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2286,6 +2349,16 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNCancelSubscriptionInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐCancelSubscriptionInput(ctx context.Context, v interface{}) (model.CancelSubscriptionInput, error) {
+	res, err := ec.unmarshalInputCancelSubscriptionInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNCreateSubscriptionInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐCreateSubscriptionInput(ctx context.Context, v interface{}) (model.CreateSubscriptionInput, error) {
+	res, err := ec.unmarshalInputCreateSubscriptionInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNCurrency2ᚕᚖgithubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐCurrencyᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Currency) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -2350,6 +2423,11 @@ func (ec *executionContext) marshalNCurrencyCode2githubᚗcomᚋoluwakeyeᚑjohn
 	return v
 }
 
+func (ec *executionContext) unmarshalNGetStatusInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐGetStatusInput(ctx context.Context, v interface{}) (model.GetStatusInput, error) {
+	res, err := ec.unmarshalInputGetStatusInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -2363,11 +2441,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNSubscriptionInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐSubscriptionInput(ctx context.Context, v interface{}) (model.SubscriptionInput, error) {
-	res, err := ec.unmarshalInputSubscriptionInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNSubscriptionStatus2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐSubscriptionStatus(ctx context.Context, sel ast.SelectionSet, v model.SubscriptionStatus) graphql.Marshaler {

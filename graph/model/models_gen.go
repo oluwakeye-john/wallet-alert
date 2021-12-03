@@ -8,16 +8,25 @@ import (
 	"strconv"
 )
 
+type CancelSubscriptionInput struct {
+	Email   string `json:"email"`
+	Address string `json:"address"`
+}
+
+type CreateSubscriptionInput struct {
+	Address      string       `json:"address"`
+	Email        string       `json:"email"`
+	CurrencyCode CurrencyCode `json:"currency_code"`
+}
+
 type Currency struct {
 	Code CurrencyCode `json:"code"`
 	Name string       `json:"name"`
 }
 
-type SubscriptionInput struct {
-	Address      string       `json:"address"`
-	Email        string       `json:"email"`
-	Name         string       `json:"name"`
-	CurrencyCode CurrencyCode `json:"currency_code"`
+type GetStatusInput struct {
+	Email   string `json:"email"`
+	Address string `json:"address"`
 }
 
 type SubscriptionStatus struct {

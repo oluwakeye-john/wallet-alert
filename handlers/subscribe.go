@@ -5,24 +5,20 @@ import (
 
 	"github.com/oluwakeye-john/wallet-alert/currencies"
 	"github.com/oluwakeye-john/wallet-alert/customerrors"
+	"github.com/oluwakeye-john/wallet-alert/database"
 	"github.com/oluwakeye-john/wallet-alert/graph/model"
+	"github.com/oluwakeye-john/wallet-alert/models"
 	"github.com/oluwakeye-john/wallet-alert/utils/validators"
+	"gorm.io/gorm"
 )
 
-func CreateSubscription(ctx context.Context, input model.SubscriptionInput) (*model.SubscriptionStatus, error) {
-	subscription_status := &model.SubscriptionStatus{}
-
+func validateInput(input *model.CreateSubscriptionInput) error {
 	is_address_valid := false
 	is_currency_supported := false
 	is_email_valid := validators.IsEmailValid(input.Email)
-	is_name_valid := validators.IsNameValid(input.Name)
-
-	if !is_name_valid {
-		return nil, customerrors.InvalidName()
-	}
 
 	if !is_email_valid {
-		return nil, customerrors.InvalidEmail()
+		return customerrors.InvalidEmail()
 	}
 
 	for _, i := range currencies.SupportedCurrencies {
@@ -34,10 +30,75 @@ func CreateSubscription(ctx context.Context, input model.SubscriptionInput) (*mo
 	}
 
 	if !is_currency_supported {
-		return nil, customerrors.UnsupportedCurrency(string(input.CurrencyCode))
+		return customerrors.UnsupportedCurrency(string(input.CurrencyCode))
 	} else if !is_address_valid {
-		return nil, customerrors.InvalidAddress()
+		return customerrors.InvalidAddress()
+	}
+
+	return nil
+}
+
+func CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput) (*model.SubscriptionStatus, error) {
+	subscription_status := &model.SubscriptionStatus{}
+
+	validation_error := validateInput(&input)
+
+	if validation_error != nil {
+		return subscription_status, validation_error
+	}
+
+	new_account := &models.Account{
+		Address:      input.Address,
+		Email:        input.Email,
+		CurrencyCode: input.CurrencyCode.String(),
+	}
+
+	save_result := new_account.Create(database.DB)
+
+	if save_result.Error != nil {
+		return subscription_status, save_result.Error
+	}
+
+	subscription_status.IsSubscribed = true
+
+	return subscription_status, nil
+}
+
+func CancelSubscription(ctx context.Context, input model.CancelSubscriptionInput) (*model.SubscriptionStatus, error) {
+	subscription_status := &model.SubscriptionStatus{}
+
+	account := models.Account{
+		Address: input.Address,
+		Email:   input.Email,
+	}
+
+	delete_result := account.Delete(database.DB)
+
+	if delete_result.Error != nil {
+		return subscription_status, delete_result.Error
 	}
 
 	return subscription_status, nil
+}
+
+func GetSubscriptionStatus(ctx context.Context, input model.GetStatusInput) (*model.SubscriptionStatus, error) {
+	subscription_status := &model.SubscriptionStatus{}
+
+	account := &models.Account{
+		Address: input.Address,
+		Email:   input.Email,
+	}
+
+	lookup_result := account.Get(database.DB)
+
+	if lookup_result.Error != nil {
+		if lookup_result.Error == gorm.ErrRecordNotFound {
+			subscription_status.IsSubscribed = false
+			return subscription_status, nil
+		}
+		return subscription_status, lookup_result.Error
+	} else {
+		subscription_status.IsSubscribed = true
+		return subscription_status, nil
+	}
 }

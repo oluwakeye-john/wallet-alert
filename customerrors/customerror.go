@@ -15,7 +15,3 @@ func InvalidAddress() error {
 func InvalidEmail() error {
 	return fmt.Errorf("invalid email address")
 }
-
-func InvalidName() error {
-	return fmt.Errorf("invalid name")
-}

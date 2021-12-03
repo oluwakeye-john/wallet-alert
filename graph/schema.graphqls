@@ -1,8 +1,17 @@
-input SubscriptionInput {
+input CreateSubscriptionInput {
   address: String!
   email: String!
-  name: String!
   currency_code: CurrencyCode!
+}
+
+input CancelSubscriptionInput {
+  email: String!
+  address: String!
+}
+
+input GetStatusInput {
+  email: String!
+  address: String!
 }
 
 enum CurrencyCode {
@@ -24,10 +33,10 @@ type SubscriptionStatus {
 
 type Query {
   supportedCurrencies: [Currency!]!
-  getSubscriptionStatus(email: String!): SubscriptionStatus!
+  getSubscriptionStatus(input: GetStatusInput!): SubscriptionStatus!
 }
 
 type Mutation {
-  createSubscription(input: SubscriptionInput!): SubscriptionStatus!
-  cancelSubscription(address: String!): SubscriptionStatus!
+  createSubscription(input: CreateSubscriptionInput!): SubscriptionStatus!
+  cancelSubscription(input: CancelSubscriptionInput!): SubscriptionStatus!
 }

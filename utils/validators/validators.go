@@ -34,7 +34,3 @@ func IsEmailValid(s string) bool {
 	_, error := mail.ParseAddress(s)
 	return error == nil
 }
-
-func IsNameValid(s string) bool {
-	return s != ""
-}
