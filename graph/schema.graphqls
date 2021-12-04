@@ -19,6 +19,11 @@ input DeleteHookInput {
   currency_code: CurrencyCode!
 }
 
+input FundTestAddressInput {
+  address: String!
+  amount: Float!
+}
+
 enum CurrencyCode {
   BTC
   ETH
@@ -46,6 +51,7 @@ type Key {
 
 type Transaction {
   txhash: String!
+  amount: Float!
 }
 
 type Query {
@@ -55,7 +61,7 @@ type Query {
 
 type Mutation {
   createTestAddress: Key!
-  fundTestAddress(address: String!): Transaction!
+  fundTestAddress(input: FundTestAddressInput!): Transaction!
   deleteAddressHook(input: DeleteHookInput!): Boolean!
   createSubscription(input: CreateSubscriptionInput!): SubscriptionStatus!
   cancelSubscription(input: CancelSubscriptionInput!): SubscriptionStatus!

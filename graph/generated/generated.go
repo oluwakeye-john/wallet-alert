@@ -60,7 +60,7 @@ type ComplexityRoot struct {
 		CreateSubscription func(childComplexity int, input model.CreateSubscriptionInput) int
 		CreateTestAddress  func(childComplexity int) int
 		DeleteAddressHook  func(childComplexity int, input model.DeleteHookInput) int
-		FundTestAddress    func(childComplexity int, address string) int
+		FundTestAddress    func(childComplexity int, input model.FundTestAddressInput) int
 	}
 
 	Query struct {
@@ -73,13 +73,14 @@ type ComplexityRoot struct {
 	}
 
 	Transaction struct {
+		Amount func(childComplexity int) int
 		Txhash func(childComplexity int) int
 	}
 }
 
 type MutationResolver interface {
 	CreateTestAddress(ctx context.Context) (*model.Key, error)
-	FundTestAddress(ctx context.Context, address string) (*model.Transaction, error)
+	FundTestAddress(ctx context.Context, input model.FundTestAddressInput) (*model.Transaction, error)
 	DeleteAddressHook(ctx context.Context, input model.DeleteHookInput) (bool, error)
 	CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput) (*model.SubscriptionStatus, error)
 	CancelSubscription(ctx context.Context, input model.CancelSubscriptionInput) (*model.SubscriptionStatus, error)
@@ -199,7 +200,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.FundTestAddress(childComplexity, args["address"].(string)), true
+		return e.complexity.Mutation.FundTestAddress(childComplexity, args["input"].(model.FundTestAddressInput)), true
 
 	case "Query.getSubscriptionStatus":
 		if e.complexity.Query.GetSubscriptionStatus == nil {
@@ -226,6 +227,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SubscriptionStatus.IsSubscribed(childComplexity), true
+
+	case "Transaction.amount":
+		if e.complexity.Transaction.Amount == nil {
+			break
+		}
+
+		return e.complexity.Transaction.Amount(childComplexity), true
 
 	case "Transaction.txhash":
 		if e.complexity.Transaction.Txhash == nil {
@@ -319,6 +327,11 @@ input DeleteHookInput {
   currency_code: CurrencyCode!
 }
 
+input FundTestAddressInput {
+  address: String!
+  amount: Float!
+}
+
 enum CurrencyCode {
   BTC
   ETH
@@ -346,6 +359,7 @@ type Key {
 
 type Transaction {
   txhash: String!
+  amount: Float!
 }
 
 type Query {
@@ -355,7 +369,7 @@ type Query {
 
 type Mutation {
   createTestAddress: Key!
-  fundTestAddress(address: String!): Transaction!
+  fundTestAddress(input: FundTestAddressInput!): Transaction!
   deleteAddressHook(input: DeleteHookInput!): Boolean!
   createSubscription(input: CreateSubscriptionInput!): SubscriptionStatus!
   cancelSubscription(input: CancelSubscriptionInput!): SubscriptionStatus!
@@ -416,15 +430,15 @@ func (ec *executionContext) field_Mutation_deleteAddressHook_args(ctx context.Co
 func (ec *executionContext) field_Mutation_fundTestAddress_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["address"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg0 model.FundTestAddressInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNFundTestAddressInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐFundTestAddressInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["address"] = arg0
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -766,7 +780,7 @@ func (ec *executionContext) _Mutation_fundTestAddress(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().FundTestAddress(rctx, args["address"].(string))
+		return ec.resolvers.Mutation().FundTestAddress(rctx, args["input"].(model.FundTestAddressInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1125,6 +1139,41 @@ func (ec *executionContext) _Transaction_txhash(ctx context.Context, field graph
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Transaction_amount(ctx context.Context, field graphql.CollectedField, obj *model.Transaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Transaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Amount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -2350,6 +2399,37 @@ func (ec *executionContext) unmarshalInputDeleteHookInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputFundTestAddressInput(ctx context.Context, obj interface{}) (model.FundTestAddressInput, error) {
+	var it model.FundTestAddressInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "address":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
+			it.Address, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "amount":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
+			it.Amount, err = ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputGetStatusInput(ctx context.Context, obj interface{}) (model.GetStatusInput, error) {
 	var it model.GetStatusInput
 	asMap := map[string]interface{}{}
@@ -2612,6 +2692,11 @@ func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = graphql.MarshalString("Transaction")
 		case "txhash":
 			out.Values[i] = ec._Transaction_txhash(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "amount":
+			out.Values[i] = ec._Transaction_amount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2967,6 +3052,26 @@ func (ec *executionContext) marshalNCurrencyCode2githubᚗcomᚋoluwakeyeᚑjohn
 
 func (ec *executionContext) unmarshalNDeleteHookInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐDeleteHookInput(ctx context.Context, v interface{}) (model.DeleteHookInput, error) {
 	res, err := ec.unmarshalInputDeleteHookInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
+	res, err := graphql.UnmarshalFloat(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	res := graphql.MarshalFloat(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNFundTestAddressInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐFundTestAddressInput(ctx context.Context, v interface{}) (model.FundTestAddressInput, error) {
+	res, err := ec.unmarshalInputFundTestAddressInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

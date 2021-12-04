@@ -29,6 +29,11 @@ type DeleteHookInput struct {
 	CurrencyCode CurrencyCode `json:"currency_code"`
 }
 
+type FundTestAddressInput struct {
+	Address string  `json:"address"`
+	Amount  float64 `json:"amount"`
+}
+
 type GetStatusInput struct {
 	Email   string `json:"email"`
 	Address string `json:"address"`
@@ -46,7 +51,8 @@ type SubscriptionStatus struct {
 }
 
 type Transaction struct {
-	Txhash string `json:"txhash"`
+	Txhash string  `json:"txhash"`
+	Amount float64 `json:"amount"`
 }
 
 type CurrencyCode string

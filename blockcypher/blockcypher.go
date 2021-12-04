@@ -2,28 +2,27 @@ package blockcypher
 
 import (
 	"log"
-	"strings"
+	"math/big"
 
 	"github.com/oluwakeye-john/wallet-alert/config"
-	"github.com/oluwakeye-john/wallet-alert/utils"
+	"github.com/oluwakeye-john/wallet-alert/currencies"
 
 	"github.com/blockcypher/gobcy"
 )
 
-func SetupHookOnAddress(address string, currency_code string) (gobcy.Hook, error) {
+func SetupAddressTransactionHook(address string, currency_code string) (gobcy.Hook, error) {
 	log.Print("Configuring webhook...")
 	defer log.Println("Done")
 
-	coin, coin_error := utils.GetCoin(currency_code)
-	chain := utils.GetChain(currency_code)
+	currency, currency_error := currencies.GetCurrencyFromCode(currency_code)
 
-	if coin_error != nil {
-		return gobcy.Hook{}, coin_error
+	if currency_error != nil {
+		return gobcy.Hook{}, currency_error
 	}
 
 	bc := gobcy.API{}
-	bc.Coin = strings.ToLower(coin)
-	bc.Chain = chain
+	bc.Coin = currency.CodeInLowerCase()
+	bc.Chain = currency.Chain
 	bc.Token = config.MustGetEnv("BLOCKCYPHER_KEY")
 
 	hook, err := bc.CreateHook(gobcy.Hook{
@@ -39,20 +38,19 @@ func SetupHookOnAddress(address string, currency_code string) (gobcy.Hook, error
 	return hook, nil
 }
 
-func DeleteHookOnAddress(hook_id string, currency_code string) error {
+func DeleteAddressTransactionHook(hook_id string, currency_code string) error {
 	log.Print("Destroying webhook...")
 	defer log.Println("Done")
 
-	coin, coin_error := utils.GetCoin(currency_code)
-	chain := utils.GetChain(currency_code)
+	currency, currency_error := currencies.GetCurrencyFromCode(currency_code)
 
-	if coin_error != nil {
-		return coin_error
+	if currency_error != nil {
+		return currency_error
 	}
 
 	bc := gobcy.API{}
-	bc.Coin = strings.ToLower(coin)
-	bc.Chain = chain
+	bc.Coin = currency.CodeInLowerCase()
+	bc.Chain = currency.Chain
 	bc.Token = config.MustGetEnv("BLOCKCYPHER_KEY")
 
 	err := bc.DeleteHook(hook_id)
@@ -62,4 +60,28 @@ func DeleteHookOnAddress(hook_id string, currency_code string) error {
 	}
 
 	return nil
+}
+
+func GetAddressBalance(address string, currency_code string) (float64, error) {
+	log.Print("Fetching address balance...")
+	defer log.Println("Done")
+
+	currency, currency_error := currencies.GetCurrencyFromCode(currency_code)
+
+	if currency_error != nil {
+		return 0, currency_error
+	}
+
+	bc := gobcy.API{}
+	bc.Coin = currency.CodeInLowerCase()
+	bc.Chain = currency.Chain
+
+	addr, err := bc.GetAddrBal(address, nil)
+
+	if err != nil {
+		return 0, err
+	}
+
+	balance, _ := new(big.Float).SetInt(&addr.Balance).Float64()
+	return balance, nil
 }

@@ -26,6 +26,6 @@ func (a *Account) Get(db *gorm.DB) *gorm.DB {
 }
 
 func (a *Account) BeforeDelete(tx *gorm.DB) (err error) {
-	blockcypher.DeleteHookOnAddress(a.HookId, a.CurrencyCode)
+	blockcypher.DeleteAddressTransactionHook(a.HookId, a.CurrencyCode)
 	return
 }

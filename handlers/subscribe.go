@@ -16,24 +16,13 @@ import (
 
 func validateInput(input *model.CreateSubscriptionInput) error {
 	is_address_valid := false
-	is_currency_supported := false
 	is_email_valid := validators.IsEmailValid(input.Email)
 
 	if !is_email_valid {
 		return customerrors.InvalidEmail()
 	}
 
-	for _, i := range currencies.SupportedCurrencies {
-		if input.CurrencyCode == model.CurrencyCode(i.Code) {
-			is_currency_supported = true
-			is_address_valid = i.IsValid(input.Address)
-			break
-		}
-	}
-
-	if !is_currency_supported {
-		return customerrors.UnsupportedCurrency(string(input.CurrencyCode))
-	} else if !is_address_valid {
+	if !is_address_valid {
 		return customerrors.InvalidAddress()
 	}
 
@@ -49,13 +38,19 @@ func CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput
 		return subscription_status, validation_error
 	}
 
+	currency, currency_error := currencies.GetCurrencyFromCode(string(input.CurrencyCode))
+
+	if currency_error != nil {
+		return subscription_status, currency_error
+	}
+
 	new_account := &models.Account{
 		Address:      input.Address,
 		Email:        input.Email,
-		CurrencyCode: input.CurrencyCode.String(),
+		CurrencyCode: currency.Code,
 	}
 
-	hook, hook_error := blockcypher.SetupHookOnAddress(new_account.Address, new_account.CurrencyCode)
+	hook, hook_error := blockcypher.SetupAddressTransactionHook(new_account.Address, new_account.CurrencyCode)
 
 	if hook_error != nil {
 		return subscription_status, hook_error
@@ -66,7 +61,7 @@ func CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput
 	save_result := new_account.Create(database.DB)
 
 	if save_result.Error != nil {
-		blockcypher.DeleteHookOnAddress(hook.ID, new_account.CurrencyCode)
+		blockcypher.DeleteAddressTransactionHook(hook.ID, new_account.CurrencyCode)
 		return subscription_status, save_result.Error
 	}
 

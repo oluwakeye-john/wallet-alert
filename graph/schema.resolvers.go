@@ -5,7 +5,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/oluwakeye-john/wallet-alert/graph/generated"
 	"github.com/oluwakeye-john/wallet-alert/graph/model"
@@ -16,8 +15,8 @@ func (r *mutationResolver) CreateTestAddress(ctx context.Context) (*model.Key, e
 	return handlers.CreateTestAddress()
 }
 
-func (r *mutationResolver) FundTestAddress(ctx context.Context, address string) (*model.Transaction, error) {
-	return handlers.FundTestAddress(address)
+func (r *mutationResolver) FundTestAddress(ctx context.Context, input model.FundTestAddressInput) (*model.Transaction, error) {
+	return handlers.FundTestAddress(input)
 }
 
 func (r *mutationResolver) DeleteAddressHook(ctx context.Context, input model.DeleteHookInput) (bool, error) {
@@ -48,19 +47,3 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *mutationResolver) FundAddress(ctx context.Context, address string) (*model.Transaction, error) {
-	return handlers.FundTestAddress(address)
-}
-func (r *mutationResolver) DeleteHook(ctx context.Context, input model.DeleteHookInput) (bool, error) {
-	return handlers.DeleteAddressHook(input)
-}
-func (r *queryResolver) CreateTestAddress(ctx context.Context) (*model.Key, error) {
-	panic(fmt.Errorf("not implemented"))
-}

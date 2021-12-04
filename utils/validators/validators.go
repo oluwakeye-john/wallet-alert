@@ -3,6 +3,7 @@ package validators
 import (
 	"net/mail"
 	"regexp"
+	"strings"
 )
 
 func VerifyETHAddress(s string) bool {
@@ -28,7 +29,20 @@ func VerifyDASHAddress(s string) bool {
 }
 
 func VerifyTestAddress(s string) bool {
-	return s != ""
+	if len(s) < 1 {
+		return false
+	}
+
+	first_letter := strings.ToUpper(s[0:1])
+
+	for _, a := range []string{"A", "C"} {
+		if first_letter == a {
+			return true
+		}
+	}
+
+	return false
+
 }
 
 func IsEmailValid(s string) bool {

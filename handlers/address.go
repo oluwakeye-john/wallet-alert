@@ -2,17 +2,22 @@ package handlers
 
 import (
 	"log"
+	"strings"
 
 	"github.com/blockcypher/gobcy"
 	"github.com/oluwakeye-john/wallet-alert/blockcypher"
 	"github.com/oluwakeye-john/wallet-alert/config"
+	"github.com/oluwakeye-john/wallet-alert/currencies"
+	"github.com/oluwakeye-john/wallet-alert/customerrors"
 	"github.com/oluwakeye-john/wallet-alert/graph/model"
 )
 
 func CreateTestAddress() (*model.Key, error) {
+	currency := currencies.TestCurrency
+
 	bc := gobcy.API{}
-	bc.Chain = "test"
-	bc.Coin = "bcy"
+	bc.Chain = currency.Chain
+	bc.Coin = currency.CodeInLowerCase()
 
 	bc.Token = config.MustGetEnv("BLOCKCYPHER_KEY")
 
@@ -36,19 +41,29 @@ func CreateTestAddress() (*model.Key, error) {
 
 }
 
-func FundTestAddress(address string) (*model.Transaction, error) {
-	bc := gobcy.API{}
-	bc.Chain = "test"
-	bc.Coin = "bcy"
-	bc.Token = config.MustGetEnv("BLOCKCYPHER_KEY")
+func FundTestAddress(input model.FundTestAddressInput) (*model.Transaction, error) {
+	currency := currencies.TestCurrency
 
-	transaction := &model.Transaction{}
-
-	key := gobcy.AddrKeychain{
-		Address: address,
+	transaction := &model.Transaction{
+		Amount: input.Amount,
 	}
 
-	txhash, err := bc.Faucet(key, 1e5)
+	bc := gobcy.API{}
+	bc.Chain = currency.Chain
+	bc.Coin = strings.ToLower(currency.Code)
+	bc.Token = config.MustGetEnv("BLOCKCYPHER_KEY")
+
+	is_address_valid := currencies.TestCurrency.IsValid(input.Address)
+
+	if !is_address_valid {
+		return transaction, customerrors.InvalidAddress()
+	}
+
+	key := gobcy.AddrKeychain{
+		Address: input.Address,
+	}
+
+	txhash, err := bc.Faucet(key, int(transaction.Amount))
 
 	if err != nil {
 		return transaction, err
@@ -60,7 +75,7 @@ func FundTestAddress(address string) (*model.Transaction, error) {
 }
 
 func DeleteAddressHook(input model.DeleteHookInput) (bool, error) {
-	err := blockcypher.DeleteHookOnAddress(input.HookID, string(input.CurrencyCode))
+	err := blockcypher.DeleteAddressTransactionHook(input.HookID, string(input.CurrencyCode))
 
 	if err != nil {
 		return false, err
