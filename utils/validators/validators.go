@@ -27,6 +27,10 @@ func VerifyDASHAddress(s string) bool {
 	return VerifyBTCAddress(s)
 }
 
+func VerifyTestAddress(s string) bool {
+	return s != ""
+}
+
 func IsEmailValid(s string) bool {
 	if s == "" {
 		return false

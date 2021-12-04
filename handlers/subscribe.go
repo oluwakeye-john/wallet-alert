@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"context"
+	"errors"
 
+	"github.com/oluwakeye-john/wallet-alert/blockcypher"
 	"github.com/oluwakeye-john/wallet-alert/currencies"
 	"github.com/oluwakeye-john/wallet-alert/customerrors"
 	"github.com/oluwakeye-john/wallet-alert/database"
@@ -53,9 +55,18 @@ func CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput
 		CurrencyCode: input.CurrencyCode.String(),
 	}
 
+	hook, hook_error := blockcypher.SetupHookOnAddress(new_account.Address, new_account.CurrencyCode)
+
+	if hook_error != nil {
+		return subscription_status, hook_error
+	}
+
+	new_account.HookId = hook.ID
+
 	save_result := new_account.Create(database.DB)
 
 	if save_result.Error != nil {
+		blockcypher.DeleteHookOnAddress(hook.ID, new_account.CurrencyCode)
 		return subscription_status, save_result.Error
 	}
 
@@ -70,6 +81,16 @@ func CancelSubscription(ctx context.Context, input model.CancelSubscriptionInput
 	account := models.Account{
 		Address: input.Address,
 		Email:   input.Email,
+	}
+
+	lookup_result := account.Get(database.DB)
+
+	if lookup_result.Error != nil {
+		if lookup_result.Error == gorm.ErrRecordNotFound {
+			return subscription_status, errors.New("not exist")
+		}
+
+		return subscription_status, lookup_result.Error
 	}
 
 	delete_result := account.Delete(database.DB)

@@ -24,13 +24,29 @@ type Currency struct {
 	Name string       `json:"name"`
 }
 
+type DeleteHookInput struct {
+	HookID       string       `json:"hook_id"`
+	CurrencyCode CurrencyCode `json:"currency_code"`
+}
+
 type GetStatusInput struct {
 	Email   string `json:"email"`
 	Address string `json:"address"`
 }
 
+type Key struct {
+	Address      string       `json:"address"`
+	PublicKey    string       `json:"public_key"`
+	PrivateKey   string       `json:"private_key"`
+	CurrencyCode CurrencyCode `json:"currency_code"`
+}
+
 type SubscriptionStatus struct {
 	IsSubscribed bool `json:"is_subscribed"`
+}
+
+type Transaction struct {
+	Txhash string `json:"txhash"`
 }
 
 type CurrencyCode string
@@ -41,6 +57,7 @@ const (
 	CurrencyCodeLtc  CurrencyCode = "LTC"
 	CurrencyCodeDoge CurrencyCode = "DOGE"
 	CurrencyCodeDash CurrencyCode = "DASH"
+	CurrencyCodeBcy  CurrencyCode = "BCY"
 )
 
 var AllCurrencyCode = []CurrencyCode{
@@ -49,11 +66,12 @@ var AllCurrencyCode = []CurrencyCode{
 	CurrencyCodeLtc,
 	CurrencyCodeDoge,
 	CurrencyCodeDash,
+	CurrencyCodeBcy,
 }
 
 func (e CurrencyCode) IsValid() bool {
 	switch e {
-	case CurrencyCodeBtc, CurrencyCodeEth, CurrencyCodeLtc, CurrencyCodeDoge, CurrencyCodeDash:
+	case CurrencyCodeBtc, CurrencyCodeEth, CurrencyCodeLtc, CurrencyCodeDoge, CurrencyCodeDash, CurrencyCodeBcy:
 		return true
 	}
 	return false

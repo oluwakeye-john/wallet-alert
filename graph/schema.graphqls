@@ -14,12 +14,18 @@ input GetStatusInput {
   address: String!
 }
 
+input DeleteHookInput {
+  hook_id: String!
+  currency_code: CurrencyCode!
+}
+
 enum CurrencyCode {
   BTC
   ETH
   LTC
   DOGE
   DASH
+  BCY
 }
 
 type Currency {
@@ -31,12 +37,26 @@ type SubscriptionStatus {
   is_subscribed: Boolean!
 }
 
+type Key {
+  address: String!
+  public_key: String!
+  private_key: String!
+  currency_code: CurrencyCode!
+}
+
+type Transaction {
+  txhash: String!
+}
+
 type Query {
   supportedCurrencies: [Currency!]!
   getSubscriptionStatus(input: GetStatusInput!): SubscriptionStatus!
 }
 
 type Mutation {
+  createTestAddress: Key!
+  fundTestAddress(address: String!): Transaction!
+  deleteAddressHook(input: DeleteHookInput!): Boolean!
   createSubscription(input: CreateSubscriptionInput!): SubscriptionStatus!
   cancelSubscription(input: CancelSubscriptionInput!): SubscriptionStatus!
 }

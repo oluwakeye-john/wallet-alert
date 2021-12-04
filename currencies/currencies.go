@@ -34,4 +34,9 @@ var SupportedCurrencies = []Currency{
 		Code:    "DASH",
 		IsValid: validators.VerifyDASHAddress,
 	},
+	{
+		Name:    "Bcy",
+		Code:    "BCY",
+		IsValid: validators.VerifyTestAddress,
+	},
 }
