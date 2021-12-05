@@ -8,6 +8,13 @@ import (
 	"strconv"
 )
 
+type Address struct {
+	Address      string       `json:"address"`
+	PublicKey    string       `json:"public_key"`
+	PrivateKey   string       `json:"private_key"`
+	CurrencyCode CurrencyCode `json:"currency_code"`
+}
+
 type CancelSubscriptionInput struct {
 	Email   string `json:"email"`
 	Address string `json:"address"`
@@ -35,19 +42,12 @@ type FundTestAddressInput struct {
 }
 
 type GetStatusInput struct {
-	Email   string `json:"email"`
-	Address string `json:"address"`
-}
-
-type Key struct {
-	Address      string       `json:"address"`
-	PublicKey    string       `json:"public_key"`
-	PrivateKey   string       `json:"private_key"`
-	CurrencyCode CurrencyCode `json:"currency_code"`
+	Email string `json:"email"`
 }
 
 type SubscriptionStatus struct {
-	IsSubscribed bool `json:"is_subscribed"`
+	IsSubscribed bool   `json:"is_subscribed"`
+	Address      string `json:"address"`
 }
 
 type Transaction struct {

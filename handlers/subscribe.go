@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/oluwakeye-john/wallet-alert/blockcypher"
 	"github.com/oluwakeye-john/wallet-alert/currencies"
 	"github.com/oluwakeye-john/wallet-alert/customerrors"
 	"github.com/oluwakeye-john/wallet-alert/database"
@@ -15,15 +14,10 @@ import (
 )
 
 func validateInput(input *model.CreateSubscriptionInput) error {
-	is_address_valid := false
 	is_email_valid := validators.IsEmailValid(input.Email)
 
 	if !is_email_valid {
 		return customerrors.InvalidEmail()
-	}
-
-	if !is_address_valid {
-		return customerrors.InvalidAddress()
 	}
 
 	return nil
@@ -44,38 +38,50 @@ func CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput
 		return subscription_status, currency_error
 	}
 
-	new_account := &models.Account{
+	is_address_valid := currency.IsAddressValid(input.Address)
+
+	if !is_address_valid {
+		return subscription_status, customerrors.InvalidAddress()
+	}
+
+	// here
+
+	address := models.Address{
 		Address:      input.Address,
-		Email:        input.Email,
 		CurrencyCode: currency.Code,
 	}
 
-	hook, hook_error := blockcypher.SetupAddressTransactionHook(new_account.Address, new_account.CurrencyCode)
-
-	if hook_error != nil {
-		return subscription_status, hook_error
+	if err := address.GetOrCreate(database.DB).Error; err != nil {
+		return subscription_status, err
 	}
 
-	new_account.HookId = hook.ID
-
-	save_result := new_account.Create(database.DB)
-
-	if save_result.Error != nil {
-		blockcypher.DeleteAddressTransactionHook(hook.ID, new_account.CurrencyCode)
-		return subscription_status, save_result.Error
+	account := &models.Account{
+		Email:     input.Email,
+		AddressId: address.ID,
 	}
 
-	subscription_status.IsSubscribed = true
+	lookup_result := account.Get(database.DB)
 
-	return subscription_status, nil
+	if lookup_result.Error == nil {
+		return subscription_status, customerrors.AlreadySubscribed()
+	} else if lookup_result.Error == gorm.ErrRecordNotFound {
+		if err := account.Create(database.DB).Error; err != nil {
+			return subscription_status, err
+		}
+
+		subscription_status.IsSubscribed = true
+		return subscription_status, nil
+	} else {
+		return subscription_status, lookup_result.Error
+	}
+
 }
 
 func CancelSubscription(ctx context.Context, input model.CancelSubscriptionInput) (*model.SubscriptionStatus, error) {
 	subscription_status := &model.SubscriptionStatus{}
 
 	account := models.Account{
-		Address: input.Address,
-		Email:   input.Email,
+		Email: input.Email,
 	}
 
 	lookup_result := account.Get(database.DB)
@@ -84,7 +90,6 @@ func CancelSubscription(ctx context.Context, input model.CancelSubscriptionInput
 		if lookup_result.Error == gorm.ErrRecordNotFound {
 			return subscription_status, errors.New("not exist")
 		}
-
 		return subscription_status, lookup_result.Error
 	}
 
@@ -101,20 +106,23 @@ func GetSubscriptionStatus(ctx context.Context, input model.GetStatusInput) (*mo
 	subscription_status := &model.SubscriptionStatus{}
 
 	account := &models.Account{
-		Address: input.Address,
-		Email:   input.Email,
+		Email: input.Email,
 	}
 
-	lookup_result := account.Get(database.DB)
-
-	if lookup_result.Error != nil {
-		if lookup_result.Error == gorm.ErrRecordNotFound {
-			subscription_status.IsSubscribed = false
-			return subscription_status, nil
-		}
-		return subscription_status, lookup_result.Error
-	} else {
-		subscription_status.IsSubscribed = true
-		return subscription_status, nil
+	if err := account.Get(database.DB).Error; err != nil {
+		return subscription_status, err
 	}
+
+	address := &models.Address{}
+	address.ID = account.AddressId
+
+	if err := address.Get(database.DB).Error; err != nil {
+		return subscription_status, err
+	}
+
+	subscription_status.IsSubscribed = true
+	subscription_status.Address = address.Address
+
+	return subscription_status, nil
+
 }

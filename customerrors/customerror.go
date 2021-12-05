@@ -15,3 +15,7 @@ func InvalidAddress() error {
 func InvalidEmail() error {
 	return fmt.Errorf("invalid email address")
 }
+
+func AlreadySubscribed() error {
+	return fmt.Errorf("already subscribed")
+}

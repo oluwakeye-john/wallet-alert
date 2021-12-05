@@ -11,7 +11,7 @@ import (
 	"github.com/oluwakeye-john/wallet-alert/handlers"
 )
 
-func (r *mutationResolver) CreateTestAddress(ctx context.Context) (*model.Key, error) {
+func (r *mutationResolver) CreateTestAddress(ctx context.Context) (*model.Address, error) {
 	return handlers.CreateTestAddress()
 }
 

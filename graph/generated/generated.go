@@ -43,16 +43,16 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	Currency struct {
-		Code func(childComplexity int) int
-		Name func(childComplexity int) int
-	}
-
-	Key struct {
+	Address struct {
 		Address      func(childComplexity int) int
 		CurrencyCode func(childComplexity int) int
 		PrivateKey   func(childComplexity int) int
 		PublicKey    func(childComplexity int) int
+	}
+
+	Currency struct {
+		Code func(childComplexity int) int
+		Name func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -69,6 +69,7 @@ type ComplexityRoot struct {
 	}
 
 	SubscriptionStatus struct {
+		Address      func(childComplexity int) int
 		IsSubscribed func(childComplexity int) int
 	}
 
@@ -79,7 +80,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateTestAddress(ctx context.Context) (*model.Key, error)
+	CreateTestAddress(ctx context.Context) (*model.Address, error)
 	FundTestAddress(ctx context.Context, input model.FundTestAddressInput) (*model.Transaction, error)
 	DeleteAddressHook(ctx context.Context, input model.DeleteHookInput) (bool, error)
 	CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput) (*model.SubscriptionStatus, error)
@@ -105,6 +106,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Address.address":
+		if e.complexity.Address.Address == nil {
+			break
+		}
+
+		return e.complexity.Address.Address(childComplexity), true
+
+	case "Address.currency_code":
+		if e.complexity.Address.CurrencyCode == nil {
+			break
+		}
+
+		return e.complexity.Address.CurrencyCode(childComplexity), true
+
+	case "Address.private_key":
+		if e.complexity.Address.PrivateKey == nil {
+			break
+		}
+
+		return e.complexity.Address.PrivateKey(childComplexity), true
+
+	case "Address.public_key":
+		if e.complexity.Address.PublicKey == nil {
+			break
+		}
+
+		return e.complexity.Address.PublicKey(childComplexity), true
+
 	case "Currency.code":
 		if e.complexity.Currency.Code == nil {
 			break
@@ -118,34 +147,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Currency.Name(childComplexity), true
-
-	case "Key.address":
-		if e.complexity.Key.Address == nil {
-			break
-		}
-
-		return e.complexity.Key.Address(childComplexity), true
-
-	case "Key.currency_code":
-		if e.complexity.Key.CurrencyCode == nil {
-			break
-		}
-
-		return e.complexity.Key.CurrencyCode(childComplexity), true
-
-	case "Key.private_key":
-		if e.complexity.Key.PrivateKey == nil {
-			break
-		}
-
-		return e.complexity.Key.PrivateKey(childComplexity), true
-
-	case "Key.public_key":
-		if e.complexity.Key.PublicKey == nil {
-			break
-		}
-
-		return e.complexity.Key.PublicKey(childComplexity), true
 
 	case "Mutation.cancelSubscription":
 		if e.complexity.Mutation.CancelSubscription == nil {
@@ -220,6 +221,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.SupportedCurrencies(childComplexity), true
+
+	case "SubscriptionStatus.address":
+		if e.complexity.SubscriptionStatus.Address == nil {
+			break
+		}
+
+		return e.complexity.SubscriptionStatus.Address(childComplexity), true
 
 	case "SubscriptionStatus.is_subscribed":
 		if e.complexity.SubscriptionStatus.IsSubscribed == nil {
@@ -319,7 +327,6 @@ input CancelSubscriptionInput {
 
 input GetStatusInput {
   email: String!
-  address: String!
 }
 
 input DeleteHookInput {
@@ -348,9 +355,10 @@ type Currency {
 
 type SubscriptionStatus {
   is_subscribed: Boolean!
+  address: String!
 }
 
-type Key {
+type Address {
   address: String!
   public_key: String!
   private_key: String!
@@ -368,7 +376,7 @@ type Query {
 }
 
 type Mutation {
-  createTestAddress: Key!
+  createTestAddress: Address!
   fundTestAddress(input: FundTestAddressInput!): Transaction!
   deleteAddressHook(input: DeleteHookInput!): Boolean!
   createSubscription(input: CreateSubscriptionInput!): SubscriptionStatus!
@@ -510,6 +518,146 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _Address_address(ctx context.Context, field graphql.CollectedField, obj *model.Address) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Address",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Address, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Address_public_key(ctx context.Context, field graphql.CollectedField, obj *model.Address) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Address",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Address_private_key(ctx context.Context, field graphql.CollectedField, obj *model.Address) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Address",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PrivateKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Address_currency_code(ctx context.Context, field graphql.CollectedField, obj *model.Address) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Address",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CurrencyCode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.CurrencyCode)
+	fc.Result = res
+	return ec.marshalNCurrencyCode2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐCurrencyCode(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Currency_code(ctx context.Context, field graphql.CollectedField, obj *model.Currency) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -580,146 +728,6 @@ func (ec *executionContext) _Currency_name(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Key_address(ctx context.Context, field graphql.CollectedField, obj *model.Key) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Key",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Address, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Key_public_key(ctx context.Context, field graphql.CollectedField, obj *model.Key) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Key",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PublicKey, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Key_private_key(ctx context.Context, field graphql.CollectedField, obj *model.Key) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Key",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PrivateKey, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Key_currency_code(ctx context.Context, field graphql.CollectedField, obj *model.Key) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Key",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CurrencyCode, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.CurrencyCode)
-	fc.Result = res
-	return ec.marshalNCurrencyCode2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐCurrencyCode(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Mutation_createTestAddress(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -750,9 +758,9 @@ func (ec *executionContext) _Mutation_createTestAddress(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Key)
+	res := resTmp.(*model.Address)
 	fc.Result = res
-	return ec.marshalNKey2ᚖgithubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐKey(ctx, field.Selections, res)
+	return ec.marshalNAddress2ᚖgithubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐAddress(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_fundTestAddress(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1104,6 +1112,41 @@ func (ec *executionContext) _SubscriptionStatus_is_subscribed(ctx context.Contex
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SubscriptionStatus_address(ctx context.Context, field graphql.CollectedField, obj *model.SubscriptionStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SubscriptionStatus",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Address, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Transaction_txhash(ctx context.Context, field graphql.CollectedField, obj *model.Transaction) (ret graphql.Marshaler) {
@@ -2447,14 +2490,6 @@ func (ec *executionContext) unmarshalInputGetStatusInput(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
-		case "address":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
-			it.Address, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		}
 	}
 
@@ -2468,6 +2503,48 @@ func (ec *executionContext) unmarshalInputGetStatusInput(ctx context.Context, ob
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var addressImplementors = []string{"Address"}
+
+func (ec *executionContext) _Address(ctx context.Context, sel ast.SelectionSet, obj *model.Address) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, addressImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Address")
+		case "address":
+			out.Values[i] = ec._Address_address(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "public_key":
+			out.Values[i] = ec._Address_public_key(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "private_key":
+			out.Values[i] = ec._Address_private_key(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "currency_code":
+			out.Values[i] = ec._Address_currency_code(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var currencyImplementors = []string{"Currency"}
 
@@ -2487,48 +2564,6 @@ func (ec *executionContext) _Currency(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "name":
 			out.Values[i] = ec._Currency_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var keyImplementors = []string{"Key"}
-
-func (ec *executionContext) _Key(ctx context.Context, sel ast.SelectionSet, obj *model.Key) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, keyImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Key")
-		case "address":
-			out.Values[i] = ec._Key_address(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "public_key":
-			out.Values[i] = ec._Key_public_key(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "private_key":
-			out.Values[i] = ec._Key_private_key(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "currency_code":
-			out.Values[i] = ec._Key_currency_code(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2665,6 +2700,11 @@ func (ec *executionContext) _SubscriptionStatus(ctx context.Context, sel ast.Sel
 			out.Values[i] = graphql.MarshalString("SubscriptionStatus")
 		case "is_subscribed":
 			out.Values[i] = ec._SubscriptionStatus_is_subscribed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "address":
+			out.Values[i] = ec._SubscriptionStatus_address(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2961,6 +3001,20 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAddress2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐAddress(ctx context.Context, sel ast.SelectionSet, v model.Address) graphql.Marshaler {
+	return ec._Address(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAddress2ᚖgithubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐAddress(ctx context.Context, sel ast.SelectionSet, v *model.Address) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Address(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3078,20 +3132,6 @@ func (ec *executionContext) unmarshalNFundTestAddressInput2githubᚗcomᚋoluwak
 func (ec *executionContext) unmarshalNGetStatusInput2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐGetStatusInput(ctx context.Context, v interface{}) (model.GetStatusInput, error) {
 	res, err := ec.unmarshalInputGetStatusInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNKey2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐKey(ctx context.Context, sel ast.SelectionSet, v model.Key) graphql.Marshaler {
-	return ec._Key(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNKey2ᚖgithubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐKey(ctx context.Context, sel ast.SelectionSet, v *model.Key) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._Key(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

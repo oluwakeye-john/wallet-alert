@@ -8,17 +8,17 @@ import (
 )
 
 type Currency struct {
-	Name    string
-	Code    string
-	IsValid func(string) bool
-	Chain   string
+	Name           string
+	Code           string
+	IsAddressValid func(string) bool
+	Chain          string
 }
 
 var TestCurrency = Currency{
-	Name:    "Bcy",
-	Code:    "BCY",
-	IsValid: validators.VerifyTestAddress,
-	Chain:   "test",
+	Name:           "Bcy",
+	Code:           "BCY",
+	IsAddressValid: validators.VerifyTestAddress,
+	Chain:          "test",
 }
 
 func (c *Currency) CodeInLowerCase() string {
@@ -42,34 +42,34 @@ func GetCurrencyFromCode(currency_code string) (Currency, error) {
 
 var SupportedCurrencies = []Currency{
 	{
-		Name:    "Bitcoin",
-		Code:    "BTC",
-		IsValid: validators.VerifyBTCAddress,
-		Chain:   "main",
+		Name:           "Bitcoin",
+		Code:           "BTC",
+		IsAddressValid: validators.VerifyBTCAddress,
+		Chain:          "main",
 	},
 	{
-		Name:    "Ethereum",
-		Code:    "ETH",
-		IsValid: validators.VerifyETHAddress,
-		Chain:   "main",
+		Name:           "Ethereum",
+		Code:           "ETH",
+		IsAddressValid: validators.VerifyETHAddress,
+		Chain:          "main",
 	},
 	{
-		Name:    "Litecoin",
-		Code:    "LTC",
-		IsValid: validators.VerifyLTCAddress,
-		Chain:   "main",
+		Name:           "Litecoin",
+		Code:           "LTC",
+		IsAddressValid: validators.VerifyLTCAddress,
+		Chain:          "main",
 	},
 	{
-		Name:    "DogeCoin",
-		Code:    "DOGE",
-		IsValid: validators.VerifyDOGEAddress,
-		Chain:   "main",
+		Name:           "DogeCoin",
+		Code:           "DOGE",
+		IsAddressValid: validators.VerifyDOGEAddress,
+		Chain:          "main",
 	},
 	{
-		Name:    "Dash",
-		Code:    "DASH",
-		IsValid: validators.VerifyDASHAddress,
-		Chain:   "main",
+		Name:           "Dash",
+		Code:           "DASH",
+		IsAddressValid: validators.VerifyDASHAddress,
+		Chain:          "main",
 	},
 	TestCurrency,
 }

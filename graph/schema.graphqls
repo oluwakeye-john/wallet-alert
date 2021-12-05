@@ -11,7 +11,6 @@ input CancelSubscriptionInput {
 
 input GetStatusInput {
   email: String!
-  address: String!
 }
 
 input DeleteHookInput {
@@ -40,9 +39,10 @@ type Currency {
 
 type SubscriptionStatus {
   is_subscribed: Boolean!
+  address: String!
 }
 
-type Key {
+type Address {
   address: String!
   public_key: String!
   private_key: String!
@@ -60,7 +60,7 @@ type Query {
 }
 
 type Mutation {
-  createTestAddress: Key!
+  createTestAddress: Address!
   fundTestAddress(input: FundTestAddressInput!): Transaction!
   deleteAddressHook(input: DeleteHookInput!): Boolean!
   createSubscription(input: CreateSubscriptionInput!): SubscriptionStatus!

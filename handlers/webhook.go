@@ -5,16 +5,16 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/blockcypher/gobcy"
 	"github.com/oluwakeye-john/wallet-alert/blockcypher"
 	"github.com/oluwakeye-john/wallet-alert/database"
 	"github.com/oluwakeye-john/wallet-alert/models"
 )
 
 func BlockCypherHook(w http.ResponseWriter, r *http.Request) {
-	defer json.NewEncoder(w).Encode("200")
+	// acknowledge webhook immediately
+	json.NewEncoder(w).Encode("200")
 
-	tx := gobcy.TX{}
+	tx := blockcypher.NewTransaction()
 
 	error := json.NewDecoder(r.Body).Decode(&tx)
 
@@ -34,16 +34,22 @@ func BlockCypherHook(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Addresses: ", len(accounts))
 
-	for x, i := range accounts {
-		log.Println("User ", x+1, ": ", i.Email)
-		balance, err := blockcypher.GetAddressBalance(i.Address, i.CurrencyCode)
+	for x, account := range accounts {
+		log.Println("User ", x+1, ": ", account.Email)
 
-		if err != nil {
+		if err := account.IncrementTransactionCount(database.DB).Error; err != nil {
 			log.Println(err)
-			return
+			continue
 		}
 
-		log.Printf("Balance %f", balance)
+		// // balance, balance_error := blockcypher.GetAddressBalance(account.Address, account.CurrencyCode)
+
+		// // if balance_error != nil {
+		// // 	log.Println(balance_error)
+		// // 	return
+		// // }
+
+		// log.Printf("Balance %f", balance)
 	}
 
 }
