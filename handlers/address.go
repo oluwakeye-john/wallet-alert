@@ -1,10 +1,14 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/oluwakeye-john/wallet-alert/blockcypher"
 	"github.com/oluwakeye-john/wallet-alert/currencies"
 	"github.com/oluwakeye-john/wallet-alert/customerrors"
 	"github.com/oluwakeye-john/wallet-alert/graph/model"
+	"github.com/oluwakeye-john/wallet-alert/models"
+	"gorm.io/gorm"
 )
 
 func CreateTestAddress() (*model.Address, error) {
@@ -35,4 +39,25 @@ func DeleteAddressHook(input model.DeleteHookInput) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func DeleteAddressWithNoAccount(db *gorm.DB, addr *models.Address) error {
+	result := db.Preload("Accounts").First(addr, "id = ?", addr.ID)
+	if result.Error != nil {
+		return result.Error
+	}
+	log.Println("Number of accounts", len(addr.Accounts))
+	if len(addr.Accounts) == 0 {
+		if error := blockcypher.DeleteAddressTransactionHook(addr.HookId, addr.CurrencyCode); error != nil {
+			return error
+		}
+
+		if error := db.Delete(addr, "id = ?", addr.ID).Error; error != nil {
+			return error
+		}
+
+		return nil
+	}
+	log.Println("Contains other accounts")
+	return nil
 }

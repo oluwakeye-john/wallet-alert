@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/oluwakeye-john/wallet-alert/blockcypher"
 	"github.com/oluwakeye-john/wallet-alert/database"
@@ -23,33 +24,35 @@ func BlockCypherHook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hook_address := tx.Addresses[0]
+
+	total, _ := strconv.ParseFloat(tx.Total.String(), 64)
+
+	log.Println("Amount: ", total)
+	log.Println("Address: ", hook_address)
+
+	address := models.Address{}
+
+	if err := database.DB.First(&address, "address = ?", hook_address).Error; err != nil {
+		log.Println(err)
+		return
+	}
+
 	accounts := []models.Account{}
 
-	address := tx.Addresses[0]
+	if err := database.DB.Find(&accounts, "address_id = ?", address.ID).Error; err != nil {
+		log.Println(err)
+		return
+	}
 
-	log.Println("Amount: ", tx.Total)
-	log.Println("Address: ", address)
-
-	database.DB.Find(&accounts, "address = ?", tx.Addresses[0])
-
-	log.Println("Addresses: ", len(accounts))
+	log.Println("Address: ", address.Address)
 
 	for x, account := range accounts {
 		log.Println("User ", x+1, ": ", account.Email)
 
-		if err := account.IncrementTransactionCount(database.DB).Error; err != nil {
+		if err := account.IncrementTransactionCount(database.DB); err != nil {
 			log.Println(err)
 			continue
 		}
-
-		// // balance, balance_error := blockcypher.GetAddressBalance(account.Address, account.CurrencyCode)
-
-		// // if balance_error != nil {
-		// // 	log.Println(balance_error)
-		// // 	return
-		// // }
-
-		// log.Printf("Balance %f", balance)
 	}
-
 }

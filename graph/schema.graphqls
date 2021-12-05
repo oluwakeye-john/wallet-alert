@@ -6,7 +6,6 @@ input CreateSubscriptionInput {
 
 input CancelSubscriptionInput {
   email: String!
-  address: String!
 }
 
 input GetStatusInput {
