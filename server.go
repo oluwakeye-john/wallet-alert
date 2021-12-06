@@ -30,7 +30,7 @@ func main() {
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
-	router.HandleFunc("/hooks", handlers.BlockCypherHook).Methods(http.MethodPost)
+	router.HandleFunc("/cb", handlers.BlockCypherHook).Methods(http.MethodPost)
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", srv)

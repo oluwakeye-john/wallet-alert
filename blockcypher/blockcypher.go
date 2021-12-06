@@ -1,6 +1,7 @@
 package blockcypher
 
 import (
+	"fmt"
 	"log"
 	"math/big"
 	"strings"
@@ -17,7 +18,7 @@ func initGobcyApi(currency currencies.Currency) *gobcy.API {
 	bc := gobcy.API{}
 	bc.Chain = currency.Chain
 	bc.Coin = strings.ToLower(currency.Code)
-	bc.Token = config.MustGetEnv("BLOCKCYPHER_KEY")
+	bc.Token = config.MustGetEnv("BLOCKCYPHER_API_KEY")
 
 	return &bc
 }
@@ -38,7 +39,7 @@ func SetupAddressTransactionHook(address string, currency_code string) (gobcy.Ho
 	hook := gobcy.Hook{
 		Event:   "confirmed-tx",
 		Address: address,
-		URL:     config.MustGetEnv("BLOCKCYPHER_WEBHOOK_URL"),
+		URL:     fmt.Sprintf("%s/cb", config.MustGetEnv("SITE_DOMAIN")),
 	}
 
 	log.Println(hook)

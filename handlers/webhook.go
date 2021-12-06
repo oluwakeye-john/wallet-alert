@@ -31,7 +31,14 @@ func BlockCypherHook(w http.ResponseWriter, r *http.Request) {
 			Address: hook_address,
 		}
 
-		if err := database.DB.Table("addresses").Joins("JOIN accounts ON accounts.address_id = addresses.address_id").First(&address, "address = ?", hook_address).Error; err != nil {
+		type Result struct {
+			models.Address
+			models.Account
+		}
+
+		result := Result{}
+
+		if err := database.DB.Table("addresses").Select("*").Joins("JOIN accounts ON accounts.address_id = addresses.id").First(&result, "addresses.address = ?", hook_address).Error; err != nil {
 			log.Println(err)
 			return
 		}
@@ -42,6 +49,8 @@ func BlockCypherHook(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
+
+		log.Println(address)
 
 		for x, account := range address.Accounts {
 			log.Println("User ", x+1, ": ", account.Email)
