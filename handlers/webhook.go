@@ -13,8 +13,7 @@ import (
 
 func BlockCypherHook(w http.ResponseWriter, r *http.Request) {
 	// acknowledge webhook immediately
-	log.Println("acknowledge")
-	json.NewEncoder(w).Encode("200")
+	log.Println("Incoming webhook")
 
 	tx := blockcypher.NewTransaction()
 	error := json.NewDecoder(r.Body).Decode(&tx)
@@ -43,8 +42,6 @@ func BlockCypherHook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println(account)
-
 		mail.SendTransactionMail(&account, &account, tx, balance)
 
 		if err := account.IncrementTransactionCount(database.DB); err != nil {
@@ -53,4 +50,6 @@ func BlockCypherHook(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}()
+
+	w.Write([]byte(""))
 }

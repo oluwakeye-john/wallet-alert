@@ -34,8 +34,6 @@ func SendMail(mail_data MailData) error {
 		return err
 	}
 
-	log.Println(buf.String())
-
 	host := config.GetEnv("MAIL_HOST")
 	port := config.GetEnv("MAIL_PORT")
 
