@@ -27,40 +27,29 @@ func BlockCypherHook(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		hook_address := tx.Addresses[0]
 
-		address := models.Address{
+		account := models.Account{
 			Address: hook_address,
 		}
 
-		type Result struct {
-			models.Address
-			models.Account
-		}
-
-		result := Result{}
-
-		if err := database.DB.Table("addresses").Select("*").Joins("JOIN accounts ON accounts.address_id = addresses.id").First(&result, "addresses.address = ?", hook_address).Error; err != nil {
+		if err := account.GetByAddress(database.DB).Error; err != nil {
 			log.Println(err)
 			return
 		}
 
-		balance, err := blockcypher.GetAddressBalance(address.Address, address.CurrencyCode)
+		balance, err := blockcypher.GetAddressBalance(account.Address, account.CurrencyCode)
 
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		log.Println(address)
+		log.Println(account)
 
-		for x, account := range address.Accounts {
-			log.Println("User ", x+1, ": ", account.Email)
+		mail.SendTransactionMail(&account, &account, tx, balance)
 
-			mail.SendTransactionMail(&address, &account, tx, balance)
-
-			if err := account.IncrementTransactionCount(database.DB); err != nil {
-				log.Println(err)
-				continue
-			}
+		if err := account.IncrementTransactionCount(database.DB); err != nil {
+			log.Println(err)
+			return
 		}
 
 	}()

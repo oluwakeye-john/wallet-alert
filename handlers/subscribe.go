@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"strings"
 
 	"github.com/oluwakeye-john/wallet-alert/currencies"
 	"github.com/oluwakeye-john/wallet-alert/customerrors"
@@ -43,33 +44,24 @@ func CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput
 		return subscription_status, customerrors.InvalidAddress()
 	}
 
-	address := models.Address{
+	account := &models.Account{
+		Email:        input.Email,
 		Address:      input.Address,
 		CurrencyCode: currency.Code,
 	}
 
-	if err := address.GetOrCreate(database.DB).Error; err != nil {
-		return subscription_status, err
-	}
-
-	account := &models.Account{
-		Email:     input.Email,
-		AddressId: address.ID,
-	}
-
-	if err := account.Get(database.DB).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			if err := account.Create(database.DB).Error; err != nil {
-				return subscription_status, err
-			}
-			subscription_status.IsSubscribed = true
-			subscription_status.Address = address.Address
-			return subscription_status, nil
+	if err := account.Create(database.DB).Error; err != nil {
+		if strings.Contains(err.Error(), "duplicate") {
+			return subscription_status, customerrors.AlreadySubscribed()
 		}
 		return subscription_status, err
-	} else {
-		return subscription_status, customerrors.AlreadySubscribed()
 	}
+
+	go account.SetupHook(database.DB)
+
+	subscription_status.IsSubscribed = true
+	subscription_status.Address = account.Address
+	return subscription_status, nil
 }
 
 func CancelSubscription(ctx context.Context, input model.CancelSubscriptionInput) (*model.SubscriptionStatus, error) {
@@ -79,21 +71,11 @@ func CancelSubscription(ctx context.Context, input model.CancelSubscriptionInput
 		Email: input.Email,
 	}
 
-	if err := account.Get(database.DB).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return subscription_status, customerrors.NotSubscribed()
-		}
-		return subscription_status, err
-	}
-
 	if err := account.Delete(database.DB).Error; err != nil {
-		return subscription_status, err
+		return subscription_status, nil
 	}
 
-	address := models.Address{}
-	address.ID = account.AddressId
-
-	go DeleteAddressWithNoAccount(database.DB, &address)
+	go account.DeleteHook(database.DB)
 
 	return subscription_status, nil
 }
@@ -101,23 +83,19 @@ func CancelSubscription(ctx context.Context, input model.CancelSubscriptionInput
 func GetSubscriptionStatus(ctx context.Context, input model.GetStatusInput) (*model.SubscriptionStatus, error) {
 	subscription_status := &model.SubscriptionStatus{}
 
-	type Result struct {
-		models.Account
-		models.Address
+	account := models.Account{
+		Email: input.Email,
 	}
 
-	result := Result{}
-	result.Email = input.Email
-
-	if err := database.DB.Table("accounts").Select("*").Joins("JOIN addresses on accounts.address_id = addresses.id").First(&result, "email = ?", input.Email).Error; err != nil {
+	if err := account.Get(database.DB).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return subscription_status, err
+			return subscription_status, nil
 		}
 		return subscription_status, err
 	}
 
 	subscription_status.IsSubscribed = true
-	subscription_status.Address = result.Address.Address
+	subscription_status.Address = account.Address
 
 	return subscription_status, nil
 }

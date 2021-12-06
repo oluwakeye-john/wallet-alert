@@ -26,7 +26,6 @@ func SetupAndConnectDB() {
 
 func Migrate() {
 	DB.AutoMigrate(
-		&models.Address{},
 		&models.Account{},
 	)
 }
