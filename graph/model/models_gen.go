@@ -13,11 +13,11 @@ type Address struct {
 	PublicKey    string       `json:"public_key"`
 	PrivateKey   string       `json:"private_key"`
 	CurrencyCode CurrencyCode `json:"currency_code"`
+	ExplorerURL  string       `json:"explorer_url"`
 }
 
 type CancelSubscriptionInput struct {
-	Email   string `json:"email"`
-	Address string `json:"address"`
+	Email string `json:"email"`
 }
 
 type CreateSubscriptionInput struct {
@@ -51,8 +51,9 @@ type SubscriptionStatus struct {
 }
 
 type Transaction struct {
-	Txhash string  `json:"txhash"`
-	Amount float64 `json:"amount"`
+	Txhash      string  `json:"txhash"`
+	Amount      float64 `json:"amount"`
+	ExplorerURL string  `json:"explorer_url"`
 }
 
 type CurrencyCode string

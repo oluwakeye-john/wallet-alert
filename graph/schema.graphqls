@@ -46,11 +46,13 @@ type Address {
   public_key: String!
   private_key: String!
   currency_code: CurrencyCode!
+  explorer_url: String!
 }
 
 type Transaction {
   txhash: String!
   amount: Float!
+  explorer_url: String!
 }
 
 type Query {

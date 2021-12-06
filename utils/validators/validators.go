@@ -35,7 +35,7 @@ func VerifyTestAddress(s string) bool {
 
 	first_letter := strings.ToUpper(s[0:1])
 
-	for _, a := range []string{"A", "C"} {
+	for _, a := range []string{"A", "C", "B"} {
 		if first_letter == a {
 			return true
 		}

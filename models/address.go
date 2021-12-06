@@ -1,6 +1,8 @@
 package models
 
 import (
+	"log"
+
 	"github.com/oluwakeye-john/wallet-alert/blockcypher"
 	"gorm.io/gorm"
 )
@@ -24,6 +26,7 @@ func (addr *Address) Get(db *gorm.DB) *gorm.DB {
 func (addr *Address) BeforeCreate(tx *gorm.DB) (err error) {
 	hook, error := blockcypher.SetupAddressTransactionHook(addr.Address, addr.CurrencyCode)
 	if error != nil {
+		log.Println(error)
 		return error
 	}
 

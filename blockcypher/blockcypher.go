@@ -23,24 +23,30 @@ func initGobcyApi(currency currencies.Currency) *gobcy.API {
 }
 
 func SetupAddressTransactionHook(address string, currency_code string) (gobcy.Hook, error) {
-	log.Print("Configuring webhook...")
+	log.Printf("Configuring webhook for %s...", address)
 	defer log.Println("Done")
 
 	currency, currency_error := currencies.GetCurrencyFromCode(currency_code)
 
 	if currency_error != nil {
+		log.Println(currency_error)
 		return gobcy.Hook{}, currency_error
 	}
 
 	bc := initGobcyApi(currency)
 
-	hook, err := bc.CreateHook(gobcy.Hook{
+	hook := gobcy.Hook{
 		Event:   "confirmed-tx",
 		Address: address,
 		URL:     config.MustGetEnv("BLOCKCYPHER_WEBHOOK_URL"),
-	})
+	}
+
+	log.Println(hook)
+
+	hook, err := bc.CreateHook(hook)
 
 	if err != nil {
+		log.Println(err)
 		return gobcy.Hook{}, err
 	}
 
@@ -109,6 +115,7 @@ func CreateTestAddress() (*model.Address, error) {
 		PublicKey:    keys.Public,
 		PrivateKey:   keys.Private,
 		CurrencyCode: model.CurrencyCode(currency.Code),
+		ExplorerURL:  currency.ExplorerAddrUrl(keys.Address),
 	}
 
 	return address, nil
@@ -140,6 +147,7 @@ func FundTestAddress(address string, amount float64) (*model.Transaction, error)
 	}
 
 	transaction.Txhash = txhash
+	transaction.ExplorerURL = currency.ExplorerTxUrl(txhash)
 
 	return transaction, nil
 }

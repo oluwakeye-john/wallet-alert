@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html style="padding: 0; margin: 0;">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body
+    style="background-color: #F2F2F2; margin: 2rem auto; max-width: 470px; width: 100%; font-size: 14px; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+
+    <table>
+        <tr>
+            <td>
+                <div style="padding: 10px 10px; ">
+                    <div>
+                        <svg style="width: 50px; height: 50px;" width="184" height="185" viewBox="0 0 184 185"
+                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M47.5414 55.3904C55.8193 46.102 67.4287 41.2393 79.344 37.6585C92.4845 33.7097 106.119 30.0641 119.316 33.8212C133.897 37.9726 149.86 45.3325 155.594 59.3672C161.25 73.2118 153.027 88.5244 147.313 102.346C142.917 112.979 134.569 120.566 126.79 129.044C118.947 137.591 113.044 149.274 101.764 151.984C90.356 154.724 79.5361 147.314 68.6179 143.018C56.8685 138.395 42.5912 136.676 35.8031 126.03C28.9215 115.237 31.8325 101.243 33.9308 88.6158C35.9419 76.5132 39.3788 64.5496 47.5414 55.3904Z"
+                                fill="url(#paint0_linear_1_3923)" stroke="#15AABF" />
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M41.0886 48.1177C53.3701 36.2869 73.2407 47.1778 90.2934 47.2797C105.986 47.3734 122.643 39.7681 135.559 48.6821C149.596 58.37 155.873 76.0876 156.716 93.1223C157.57 110.378 152.766 128.391 140.085 140.125C128.06 151.251 110.473 151.157 94.0909 151.067C78.6528 150.981 62.1728 150.318 51.0312 139.631C40.0078 129.057 39.8524 112.644 38.2025 97.4588C36.3526 80.432 28.7537 59.9998 41.0886 48.1177Z"
+                                fill="#BB6BD9" fill-opacity="0.5" stroke="#9B51E0" />
+                            <defs>
+                                <linearGradient id="paint0_linear_1_3923" x1="51.9736" y1="50.6079" x2="132.026"
+                                    y2="125.009" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#15AABF" />
+                                    <stop offset="1" stop-color="#C4C4C4" stop-opacity="0" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+
+                </div>
+            </td>
+            <td>
+
+                <h1 style="font-family: cursive; font-size: 30px; color: #0E3F6C;">Wallet Alert</h1>
+            </td>
+        </tr>
+    </table>
+
+    <div style="padding: 0 20px;">
+        <h3 style="padding-bottom: 10px;">Hi {{.Email}},</h3>
+        <p style="padding-bottom:40px">You have a transaction notification on your FirstBank account</p>
+    </div>
+
+    <div
+        style="background-color: #fff; box-sizing: border-box; border: 1px solid #E6E6E6; border-radius: 20px; margin: 20px; padding: 20px;">
+
+        <div>
+            <div style="padding-bottom:10px">
+                <p style="color: #202124; font-weight: 600;">Date/Time</p>
+                <p style="color: #555">{{.Time}}</p>
+            </div>
+            <div style="padding-bottom:10px">
+                <p style="color: #202124; font-weight: 600;">From</p>
+                <p style="word-break: break-all; color: #555">C9qAz8sT8XFGg3zNQwEUiEFjmv43WTA8cW</p>
+            </div>
+            <div style="padding-bottom:10px">
+                <p style="color: #202124; font-weight: 600;">To</p>
+                <p style="word-break: break-all; color: #555">C9qAz8sT8XFGg3zNQwEUiEFjmv43WTA8cW</p>
+            </div>
+            <div style="padding-bottom:10px">
+                <p style="color: #202124; font-weight: 600;">Amount</p>
+                <p style="color: #555">{{.AmountInString}}</p>
+            </div>
+            <div style="padding-bottom:10px">
+                <p style="color: #202124; font-weight: 600;">Balance</p>
+                <p style="color: #555">{{.BalanceInString}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding: 20px;">
+        <p>Unsubscribe &middot; Terms and Condition &middot; Privacy Policy</p>
+    </div>
+
+</body>
+
+</html>

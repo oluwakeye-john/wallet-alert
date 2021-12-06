@@ -46,6 +46,7 @@ type ComplexityRoot struct {
 	Address struct {
 		Address      func(childComplexity int) int
 		CurrencyCode func(childComplexity int) int
+		ExplorerURL  func(childComplexity int) int
 		PrivateKey   func(childComplexity int) int
 		PublicKey    func(childComplexity int) int
 	}
@@ -74,8 +75,9 @@ type ComplexityRoot struct {
 	}
 
 	Transaction struct {
-		Amount func(childComplexity int) int
-		Txhash func(childComplexity int) int
+		Amount      func(childComplexity int) int
+		ExplorerURL func(childComplexity int) int
+		Txhash      func(childComplexity int) int
 	}
 }
 
@@ -119,6 +121,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Address.CurrencyCode(childComplexity), true
+
+	case "Address.explorer_url":
+		if e.complexity.Address.ExplorerURL == nil {
+			break
+		}
+
+		return e.complexity.Address.ExplorerURL(childComplexity), true
 
 	case "Address.private_key":
 		if e.complexity.Address.PrivateKey == nil {
@@ -243,6 +252,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Transaction.Amount(childComplexity), true
 
+	case "Transaction.explorer_url":
+		if e.complexity.Transaction.ExplorerURL == nil {
+			break
+		}
+
+		return e.complexity.Transaction.ExplorerURL(childComplexity), true
+
 	case "Transaction.txhash":
 		if e.complexity.Transaction.Txhash == nil {
 			break
@@ -322,7 +338,6 @@ var sources = []*ast.Source{
 
 input CancelSubscriptionInput {
   email: String!
-  address: String!
 }
 
 input GetStatusInput {
@@ -363,11 +378,13 @@ type Address {
   public_key: String!
   private_key: String!
   currency_code: CurrencyCode!
+  explorer_url: String!
 }
 
 type Transaction {
   txhash: String!
   amount: Float!
+  explorer_url: String!
 }
 
 type Query {
@@ -656,6 +673,41 @@ func (ec *executionContext) _Address_currency_code(ctx context.Context, field gr
 	res := resTmp.(model.CurrencyCode)
 	fc.Result = res
 	return ec.marshalNCurrencyCode2githubᚗcomᚋoluwakeyeᚑjohnᚋwalletᚑalertᚋgraphᚋmodelᚐCurrencyCode(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Address_explorer_url(ctx context.Context, field graphql.CollectedField, obj *model.Address) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Address",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExplorerURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Currency_code(ctx context.Context, field graphql.CollectedField, obj *model.Currency) (ret graphql.Marshaler) {
@@ -1217,6 +1269,41 @@ func (ec *executionContext) _Transaction_amount(ctx context.Context, field graph
 	res := resTmp.(float64)
 	fc.Result = res
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Transaction_explorer_url(ctx context.Context, field graphql.CollectedField, obj *model.Transaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Transaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExplorerURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -2358,14 +2445,6 @@ func (ec *executionContext) unmarshalInputCancelSubscriptionInput(ctx context.Co
 			if err != nil {
 				return it, err
 			}
-		case "address":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
-			it.Address, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		}
 	}
 
@@ -2532,6 +2611,11 @@ func (ec *executionContext) _Address(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "currency_code":
 			out.Values[i] = ec._Address_currency_code(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "explorer_url":
+			out.Values[i] = ec._Address_explorer_url(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2737,6 +2821,11 @@ func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionS
 			}
 		case "amount":
 			out.Values[i] = ec._Transaction_amount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "explorer_url":
+			out.Values[i] = ec._Transaction_explorer_url(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

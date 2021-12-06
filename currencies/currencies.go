@@ -1,6 +1,7 @@
 package currencies
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/oluwakeye-john/wallet-alert/customerrors"
@@ -8,10 +9,12 @@ import (
 )
 
 type Currency struct {
-	Name           string
-	Code           string
-	IsAddressValid func(string) bool
-	Chain          string
+	Name            string
+	Code            string
+	IsAddressValid  func(string) bool
+	Chain           string
+	ExplorerTxUrl   func(string) string
+	ExplorerAddrUrl func(string) string
 }
 
 var TestCurrency = Currency{
@@ -19,6 +22,12 @@ var TestCurrency = Currency{
 	Code:           "BCY",
 	IsAddressValid: validators.VerifyTestAddress,
 	Chain:          "test",
+	ExplorerTxUrl: func(s string) string {
+		return fmt.Sprintf("https://live.blockcypher.com/bcy/tx/%s", s)
+	},
+	ExplorerAddrUrl: func(s string) string {
+		return fmt.Sprintf("https://live.blockcypher.com/bcy/address/%s", s)
+	},
 }
 
 func (c *Currency) CodeInLowerCase() string {
@@ -46,30 +55,60 @@ var SupportedCurrencies = []Currency{
 		Code:           "BTC",
 		IsAddressValid: validators.VerifyBTCAddress,
 		Chain:          "main",
+		ExplorerTxUrl: func(s string) string {
+			return ""
+		},
+		ExplorerAddrUrl: func(s string) string {
+			return ""
+		},
 	},
 	{
 		Name:           "Ethereum",
 		Code:           "ETH",
 		IsAddressValid: validators.VerifyETHAddress,
 		Chain:          "main",
+		ExplorerTxUrl: func(s string) string {
+			return ""
+		},
+		ExplorerAddrUrl: func(s string) string {
+			return ""
+		},
 	},
 	{
 		Name:           "Litecoin",
 		Code:           "LTC",
 		IsAddressValid: validators.VerifyLTCAddress,
 		Chain:          "main",
+		ExplorerTxUrl: func(s string) string {
+			return ""
+		},
+		ExplorerAddrUrl: func(s string) string {
+			return ""
+		},
 	},
 	{
 		Name:           "DogeCoin",
 		Code:           "DOGE",
 		IsAddressValid: validators.VerifyDOGEAddress,
 		Chain:          "main",
+		ExplorerTxUrl: func(s string) string {
+			return ""
+		},
+		ExplorerAddrUrl: func(s string) string {
+			return ""
+		},
 	},
 	{
 		Name:           "Dash",
 		Code:           "DASH",
 		IsAddressValid: validators.VerifyDASHAddress,
 		Chain:          "main",
+		ExplorerTxUrl: func(s string) string {
+			return ""
+		},
+		ExplorerAddrUrl: func(s string) string {
+			return ""
+		},
 	},
 	TestCurrency,
 }
