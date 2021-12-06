@@ -8,9 +8,11 @@ import (
 )
 
 func Init() {
-	error := godotenv.Load()
-	if error != nil {
-		log.Fatalf(error.Error())
+	if GetEnv("APP_ENV") == "development" {
+		error := godotenv.Load()
+		if error != nil {
+			log.Fatalf(error.Error())
+		}
 	}
 }
 
