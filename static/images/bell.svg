@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg" id="svg5697" viewBox="0 0 128 124" version="1.0">
+  <g id="layer1" transform="translate(-4.6473 -10.173)">
+    <g id="g3635" transform="matrix(1.0777 0 0 .93380 -214.85 -177.08)">
+      <g id="g5895" transform="matrix(.92336 0 0 1.0767 123.96 -103.19)">
+        <path id="path3645" stroke-linejoin="round" d="m149.85 285.51c-20.06 0-37.2 19.52-38.6 40.94-1.38 21.39-0.53 28.58-15.464 47.4-3.848 2.58-6 5.46-6 8.5 0 10.83 27.284 19.63 60.874 19.63 33.6 0 60.84-8.8 60.84-19.63 0-3.03-2.14-5.9-5.96-8.46-15.37-24.61-10.9-21.56-17.13-48.25-6.23-26.7-18.74-40.13-38.56-40.13z" stroke="#000" stroke-linecap="round" stroke-width="6.879" fill="#ffd400"/>
+        <path id="path3668" d="m335.51 321.37a64.672 19.206 0 1 1 -129.34 0 64.672 19.206 0 1 1 129.34 0z" fill="#ffa000" transform="matrix(.80606 0 0 .67347 -67.842 165.82)"/>
+        <path id="path3671" d="m285.34 316.66a10.583 8.231 0 1 1 -21.16 0 10.583 8.231 0 1 1 21.16 0z" fill="#ffd400" transform="translate(-114.88 63.234)"/>
+        <path id="path3694" d="m153.08 298.61c3.95 4.58-4.39 0.37-15.71 11.9-12.85 13.1-8.95 24.1-13.13 19.83-4.19-4.3-1.24-17.92 6.13-25.64 7.37-7.73 18.78-10.65 22.71-6.09z" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Yellow Bell Icon that looks cool with lots of title words to increase the titles space in an unrealistic test!</dc:title>
+        <dc:date>2009-03-23T10:28:10</dc:date>
+        <dc:description>A bell icon. Minimalist. Inspired by http://openclipart.org/media/files/pitr/10285 I've kept these within 128 size. Part 3/6 of a requested set.</dc:description>
+        <dc:source>http://openclipart.org/detail/22885/yellow-bell-icon-that-looks-cool-with-lots-of-title-words-to-increase-the-titles-space-in-an-unrealistic-test!-by-chovynz</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>chovynz</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>bell</rdf:li>
+            <rdf:li>clip art</rdf:li>
+            <rdf:li>clipart</rdf:li>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>image</rdf:li>
+            <rdf:li>media</rdf:li>
+            <rdf:li>music</rdf:li>
+            <rdf:li>png</rdf:li>
+            <rdf:li>public domain</rdf:li>
+            <rdf:li>svg</rdf:li>
+            <rdf:li>yellow</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
