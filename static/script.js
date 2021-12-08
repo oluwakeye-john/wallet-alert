@@ -60,6 +60,15 @@
       duration: 200,
       delay: anime.stagger(100),
     });
+
+    anime({
+      targets: ".label, .owner",
+      translateY: [-20, 0],
+      opacity: [0, 1],
+      easing: "spring",
+      duration: 200,
+      delay: anime.stagger(100),
+    });
     document.querySelector(".form-1").style.pointerEvents = "all";
   });
 
