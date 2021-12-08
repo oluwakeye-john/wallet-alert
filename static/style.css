@@ -44,6 +44,16 @@ p {
   height: 100%;
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 0 2rem;
+    width: 100%;
+  }
+  .title {
+    font-size: 40px !important;
+  }
+}
+
 input {
   width: 100%;
   background-color: transparent;
@@ -127,23 +137,17 @@ option {
   position: relative;
 }
 
-.form-1,
 .form-2 {
-  opacity: 0;
-  transition: 0.3s ease-in-out;
   pointer-events: none;
-  transform: translateY(50px);
-  pointer-events: none;
-}
-
-.form--show {
-  opacity: 1;
-  transform: translateY(0px);
-  pointer-events: all !important;
-
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+}
+
+.title,
+.subtitle,
+.form-1,
+.form-2 {
+  opacity: 0;
 }

@@ -21,39 +21,42 @@
                 <img style="width: 50px; vertical-align: middle;" src="images/bell.svg" />
                 Wallet Alert
             </h1>
-            <p>
+            <p class="subtitle">
                 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ducimus perspiciatis praesentium sed
                 temporibus, consectetur, ea numquam minus ipsa provident eveniet suscipit maxime ipsam, tempore amet
                 possimus sequi aut magni impedit.
             </p>
             <div class="form-container">
-                <div class="form-1 form--show">
-                    <form class="input-container">
+                <form class="form-1">
+                    <div class="input-container">
                         <div class="input-content">
-                            <input autocomplete="" id="address-input" placeholder="Enter Wallet Address" />
-                            <select class="input-select">
+                            <input required autocomplete="off" id="address-input" placeholder="Enter Wallet Address" />
+                            <select id="currency-input" class="input-select">
                                 <option>BTC</option>
                                 <option>ETH</option>
                                 <option>XRP</option>
                             </select>
                         </div>
-                        <button id="form1-button" disabled class="btn">Continue</button>
-                    </form>
-                    <button id="metamask-login-btn" class="tag">Use Metamask >>></button>
-                </div>
-                <div class="form-2">
-                    <form class="input-container">
+                        <button id="form1-btn" class="btn">Continue</button>
+                    </div>
+                    <button type="button" id="metamask-login-btn" class="tag">Use Metamask >>></button>
+                </form>
+                <form class="form-2">
+                    <div class="input-container">
                         <div class="input-content">
-                            <input id="email-input" placeholder="Enter Email Address" />
+                            <input autocomplete="off" required type="email" id="email-input"
+                                placeholder="Enter Email Address" />
                         </div>
-                        <button id="form2-button" disabled class="btn">Continue</button>
-                    </form>
-                </div>
+                        <button id="form2-button" class="btn">Continue</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <script src="/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <script src="/script.js"></script>
 </body>
 
 </html>
