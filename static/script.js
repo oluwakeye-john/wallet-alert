@@ -1,6 +1,4 @@
 (function () {
-  // scoped
-
   const Ethereum = window.ethereum;
 
   let address = "";
@@ -8,15 +6,14 @@
   let email = "";
 
   const onMetamaskClick = async () => {
-    console.log("--");
     if (Ethereum && Ethereum.isMetaMask) {
       const { error, account } = await getMetamaskAddress();
 
       if (error) {
         console.log(error);
       } else {
-        console.log({ account });
         document.querySelector("#address-input").value = account;
+        document.querySelector("#currency-input").value = "ETH";
       }
     } else {
       alert("Install metamask");
@@ -92,10 +89,11 @@
     });
   });
 
-  document.querySelector(".form-2").addEventListener("submit", (e) => {
+  document.querySelector(".form-2").addEventListener("submit", async (e) => {
     e.preventDefault();
     email = document.querySelector("#email-input").value;
     console.log({ address, email, currency });
-    alert("done");
+    const response = await createSubscription({ address, email, currency });
+    console.log({ response });
   });
 })();

@@ -106,6 +106,16 @@ button:disabled {
   font-size: 0.9rem;
 }
 
+@media (max-width: 768px) {
+  .input-container {
+    flex-direction: column;
+  }
+  .btn {
+    margin-left: 0;
+    margin-top: 2rem;
+  }
+}
+
 .tag {
   background: none;
   border: none;
