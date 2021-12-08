@@ -105,4 +105,25 @@
     const response = await createSubscription({ address, email, currency });
     console.log({ response });
   });
+
+  document.querySelector(".back-btn").addEventListener("click", () => {
+    document.querySelector(".form-1").style.pointerEvents = "all";
+    document.querySelector(".form-2").style.pointerEvents = "none";
+
+    anime({
+      targets: ".form-1",
+      translateY: [100, 0],
+      opacity: [0, 1],
+      easing: "spring",
+      duration: 200,
+    });
+
+    anime({
+      targets: ".form-2",
+      translateY: [0, 100],
+      opacity: [1, 0],
+      easing: "spring",
+      duration: 200,
+    });
+  });
 })();
