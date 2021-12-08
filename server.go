@@ -32,9 +32,10 @@ func main() {
 
 	router.HandleFunc("/cb", handlers.BlockCypherHook).Methods(http.MethodPost)
 
-	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	router.Handle("/playground", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", srv)
 
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	http.Handle("/", router)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)

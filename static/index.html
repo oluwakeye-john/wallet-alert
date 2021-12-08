@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Alert</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="images/bell.svg" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div>
+            <h1 class="title">
+                <img style="width: 50px; vertical-align: middle;" src="images/bell.svg" />
+                Wallet Alert
+            </h1>
+            <p class="subtitle">
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ducimus perspiciatis praesentium sed
+                temporibus, consectetur, ea numquam minus ipsa provident eveniet suscipit maxime ipsam, tempore amet
+                possimus sequi aut magni impedit.
+            </p>
+            <div class="form-container">
+                <form class="form-1">
+                    <div class="input-container">
+                        <div class="input-content">
+                            <input required autocomplete="off" id="address-input" placeholder="Enter Wallet Address" />
+                            <select id="currency-input" class="input-select">
+                                <option>BTC</option>
+                                <option>BCY</option>
+                                <option>ETH</option>
+                                <option>XRP</option>
+                            </select>
+                        </div>
+                        <button id="form1-btn" class="btn">Continue</button>
+                    </div>
+                    <button type="button" id="metamask-login-btn" class="tag">Use Metamask >>></button>
+                </form>
+                <form class="form-2">
+                    <div class="input-container">
+                        <div class="input-content">
+                            <input autocomplete="off" required type="email" id="email-input"
+                                placeholder="Enter Email Address" />
+                        </div>
+                        <button id="form2-button" class="btn">Continue</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <script src="/script.js"></script>
+    <script src="/request.js"></script>
+</body>
+
+</html>
