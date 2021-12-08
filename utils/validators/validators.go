@@ -3,7 +3,6 @@ package validators
 import (
 	"net/mail"
 	"regexp"
-	"strings"
 )
 
 func VerifyETHAddress(s string) bool {
@@ -17,32 +16,23 @@ func VerifyBTCAddress(s string) bool {
 }
 
 func VerifyLTCAddress(s string) bool {
-	return VerifyBTCAddress(s)
+	re := regexp.MustCompile("^[LM3][a-km-zA-HJ-NP-Z1-9]{26,33}$")
+	return re.MatchString(s)
 }
 
 func VerifyDOGEAddress(s string) bool {
-	return VerifyBTCAddress(s)
+	re := regexp.MustCompile("^D{1}[5-9A-HJ-NP-U]{1}[1-9A-HJ-NP-Za-km-z]{32}$")
+	return re.MatchString(s)
 }
 
 func VerifyDASHAddress(s string) bool {
-	return VerifyBTCAddress(s)
+	re := regexp.MustCompile("^X[1-9A-HJ-NP-Za-km-z]{33}")
+	return re.MatchString(s)
 }
 
 func VerifyTestAddress(s string) bool {
-	if len(s) < 1 {
-		return false
-	}
-
-	first_letter := strings.ToUpper(s[0:1])
-
-	for _, a := range []string{"A", "C", "B"} {
-		if first_letter == a {
-			return true
-		}
-	}
-
-	return false
-
+	re := regexp.MustCompile("^(B|C|D)[a-zA-HJ-NP-Z0-9]{25,39}$")
+	return re.MatchString(s)
 }
 
 func IsEmailValid(s string) bool {
