@@ -12,6 +12,7 @@ import (
 	"github.com/oluwakeye-john/wallet-alert/graph"
 	"github.com/oluwakeye-john/wallet-alert/graph/generated"
 	"github.com/oluwakeye-john/wallet-alert/handlers"
+	"github.com/oluwakeye-john/wallet-alert/jobs"
 )
 
 const defaultPort = "8080"
@@ -20,6 +21,8 @@ func main() {
 	config.Init()
 	database.SetupAndConnectDB()
 	database.Migrate()
+
+	jobs.SetupCronjobs()
 
 	port := config.GetEnv("PORT")
 	if port == "" {
