@@ -15,6 +15,7 @@ body {
   --bg-color: #020e18;
   /* --primary: #ffd400; */
   --primary: #32cc79;
+  --error: #c20707;
 }
 
 body {
@@ -198,4 +199,18 @@ option {
   .owner {
     display: none;
   }
+}
+
+.toast {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  text-align: center;
+  color: var(--error);
+  padding: 3rem;
+  font-weight: 300;
+  margin: 0;
+  letter-spacing: 1.2px;
 }

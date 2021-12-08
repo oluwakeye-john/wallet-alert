@@ -19,7 +19,7 @@ type MailData struct {
 }
 
 func SendMail(mail_data MailData) error {
-	log.Println("Sending mail")
+	log.Printf("Sending %s mail to %s", mail_data.TemplateName, mail_data.To)
 	tmp, err := template.ParseFiles(fmt.Sprintf("mail/templates/%s.html", mail_data.TemplateName))
 
 	if err != nil {

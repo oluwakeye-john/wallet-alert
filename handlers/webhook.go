@@ -42,7 +42,7 @@ func BlockCypherHook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mail.SendTransactionMail(&account, &account, tx, balance)
+		mail.SendTransactionMail(&account, tx, balance)
 
 		if err := account.IncrementTransactionCount(database.DB); err != nil {
 			log.Println(err)

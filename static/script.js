@@ -11,12 +11,13 @@
 
       if (error) {
         console.log(error);
+        updateToast(error);
       } else {
         document.querySelector("#address-input").value = account;
         document.querySelector("#currency-input").value = "ETH";
       }
     } else {
-      alert("Install metamask");
+      updateToast("Metamask is not available");
     }
   };
 
@@ -45,6 +46,37 @@
     } catch (err) {
       return { error: err?.message || defaultErrorMessage, account: null };
     }
+  };
+
+  const updateToast = (text, success = false) => {
+    const toastEl = document.querySelector("#toast");
+
+    if (success) {
+      toastEl.style.color = "var(--primary)";
+    } else {
+      toastEl.style.color = "var(--error)";
+    }
+    anime({
+      targets: "#toast",
+      translateY: [30, 0],
+      opacity: [0, 1],
+      easing: "spring",
+      duration: 100,
+    });
+    toastEl.innerText = text;
+
+    setTimeout(() => {
+      anime({
+        targets: "#toast",
+        translateY: [0, 30],
+        opacity: [1, 0],
+        easing: "spring",
+        duration: 100,
+        complete: () => {
+          toastEl.innerText = "";
+        },
+      });
+    }, 3000);
   };
 
   document
@@ -101,9 +133,16 @@
   document.querySelector(".form-2").addEventListener("submit", async (e) => {
     e.preventDefault();
     email = document.querySelector("#email-input").value;
-    console.log({ address, email, currency });
-    const response = await createSubscription({ address, email, currency });
-    console.log({ response });
+    try {
+      const error = await createSubscription({ address, email, currency });
+      if (error) {
+        updateToast(error);
+      } else {
+        updateToast("Success", true);
+      }
+    } catch (err) {
+      updateToast(err);
+    }
   });
 
   document.querySelector(".back-btn").addEventListener("click", () => {

@@ -11,8 +11,8 @@ import (
 	"github.com/oluwakeye-john/wallet-alert/models"
 )
 
-func SendTransactionMail(a *models.Account, account *models.Account, tx *gobcy.TX, balance float64) {
-	currency, currency_error := currencies.GetCurrencyFromCode(a.CurrencyCode)
+func SendTransactionMail(account *models.Account, tx *gobcy.TX, balance float64) {
+	currency, currency_error := currencies.GetCurrencyFromCode(account.CurrencyCode)
 
 	if currency_error != nil {
 		log.Println(currency_error)
@@ -39,7 +39,7 @@ func SendTransactionMail(a *models.Account, account *models.Account, tx *gobcy.T
 			Time:            tx.Confirmed.In(location).Format(time.RFC850),
 			BalanceInString: fmt.Sprintf("%f%s", balance/100000000, currency.Code),
 			AmountInString:  fmt.Sprintf("%f%s", tx_amount/100000000, currency.Code),
-			Address:         a.Address,
+			Address:         account.Address,
 			CurrencyCode:    currency.Code,
 			Type:            "incoming",
 			Email:           account.Email,

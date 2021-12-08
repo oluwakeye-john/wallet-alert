@@ -8,6 +8,7 @@ import (
 	"github.com/oluwakeye-john/wallet-alert/customerrors"
 	"github.com/oluwakeye-john/wallet-alert/database"
 	"github.com/oluwakeye-john/wallet-alert/graph/model"
+	"github.com/oluwakeye-john/wallet-alert/mail"
 	"github.com/oluwakeye-john/wallet-alert/models"
 	"github.com/oluwakeye-john/wallet-alert/utils/validators"
 	"gorm.io/gorm"
@@ -58,6 +59,7 @@ func CreateSubscription(ctx context.Context, input model.CreateSubscriptionInput
 	}
 
 	go account.SetupHook(database.DB)
+	go mail.SendNewSubscriberMail(account)
 
 	subscription_status.IsSubscribed = true
 	subscription_status.Address = account.Address

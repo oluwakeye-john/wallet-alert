@@ -21,12 +21,11 @@ const createSubscription = async (data) => {
     .then((res) => {
       if (res.errors) {
         console.log(res.errors, res.errors[0].message);
-        return res.errors[0].message;
+        throw res.errors[0].message;
       }
-      return "Done";
+      return;
     })
     .catch((err) => {
-      console.log({ err });
-      return "An error occurred";
+      return err || "An error occurred";
     });
 };
