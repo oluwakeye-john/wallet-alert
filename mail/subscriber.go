@@ -12,9 +12,11 @@ func SendNewSubscriberMail(account *models.Account) {
 		To:           account.Email,
 		Subject:      "Welcome to Wallet-Alert",
 		Data: struct {
-			Email string
+			Email   string
+			Address string
 		}{
-			Email: account.Email,
+			Email:   account.Email,
+			Address: account.Address,
 		},
 	}
 
