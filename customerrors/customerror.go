@@ -9,17 +9,13 @@ func UnsupportedCurrency(code string) error {
 }
 
 func InvalidAddress() error {
-	return fmt.Errorf("address is invalid")
+	return fmt.Errorf("your wallet address is invalid")
 }
 
 func InvalidEmail() error {
-	return fmt.Errorf("invalid email address")
+	return fmt.Errorf("please enter a valid email address")
 }
 
 func AlreadySubscribed() error {
-	return fmt.Errorf("already subscribed")
-}
-
-func NotSubscribed() error {
-	return fmt.Errorf("not subscribed")
+	return fmt.Errorf("you are already subscribed")
 }

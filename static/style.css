@@ -14,8 +14,8 @@ body {
   --white: #fff;
   --bg-color: #020e18;
   /* --primary: #ffd400; */
-  --primary: #32cc79;
-  --error: #c20707;
+  --primary: #17bd70;
+  --error: #fb5151;
 }
 
 body {
@@ -213,4 +213,5 @@ option {
   font-weight: 300;
   margin: 0;
   letter-spacing: 1.2px;
+  pointer-events: none;
 }

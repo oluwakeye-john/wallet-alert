@@ -166,6 +166,7 @@
     e.preventDefault();
     email = document.querySelector("#email-input").value;
     try {
+      setLoading(true);
       const error = await createSubscription({ address, email, currency });
       if (error) {
         updateToast(error);
@@ -174,6 +175,8 @@
       }
     } catch (err) {
       updateToast(err);
+    } finally {
+      setLoading(false);
     }
   });
 
@@ -197,4 +200,8 @@
       duration: 200,
     });
   });
+
+  const setLoading = (value) => {
+    document.querySelector("#form2-btn").disabled = value;
+  };
 })();
