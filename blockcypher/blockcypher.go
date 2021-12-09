@@ -156,3 +156,15 @@ func FundTestAddress(address string, amount float64) (*model.Transaction, error)
 func NewTransaction() *gobcy.TX {
 	return &gobcy.TX{}
 }
+
+func ListAllHooks(currency_code string) ([]gobcy.Hook, error) {
+	currency, currency_error := currencies.GetCurrencyFromCode(currency_code)
+
+	if currency_error != nil {
+		return []gobcy.Hook{}, currency_error
+	}
+
+	bc := initGobcyApi(currency)
+
+	return bc.ListHooks()
+}

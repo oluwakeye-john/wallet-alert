@@ -167,6 +167,13 @@ option {
 .owner {
   color: var(--gray);
   font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+  text-decoration: none;
+}
+
+.owner:hover {
+  color: var(--primary);
 }
 
 .navbar {

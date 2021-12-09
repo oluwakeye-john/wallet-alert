@@ -142,6 +142,20 @@
     address = document.querySelector("#address-input").value;
     currency = document.querySelector("#currency-input").value;
 
+    if (currency !== "BCY") {
+      const isValid = window.WAValidator.validate(address, currency);
+
+      if (!isValid) {
+        updateToast("Address is not valid");
+        return;
+      }
+    } else {
+      if (!/^(B|C|D)[a-zA-HJ-NP-Z0-9]{25,39}$/.test(address)) {
+        updateToast("Address is not valid");
+        return;
+      }
+    }
+
     document.querySelector(".form-1").style.pointerEvents = "none";
     document.querySelector(".form-2").style.pointerEvents = "all";
 
