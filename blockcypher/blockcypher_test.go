@@ -8,11 +8,13 @@ import (
 	"github.com/oluwakeye-john/wallet-alert/utils/validators"
 )
 
+func setupEnv() {
+	// if it fails, don't panic
+	godotenv.Load("../.env")
+}
+
 func TestCreateTestAddress(t *testing.T) {
-	error := godotenv.Load("../.env")
-	if error != nil {
-		log.Fatalf("Error loading env")
-	}
+	setupEnv()
 
 	addr, err := CreateTestAddress()
 
@@ -47,6 +49,8 @@ func containsHook(hook_id string, currency_code string) bool {
 }
 
 func TestHooks(t *testing.T) {
+	setupEnv()
+
 	res, err := CreateTestAddress()
 
 	address := res.Address
