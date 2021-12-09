@@ -23,4 +23,5 @@ jobs:
       - name: Test
         env:
           BLOCKCYPHER_API_KEY: ${{ secrets.BLOCKCYPHER_API_KEY }}
+          SITE_DOMAIN: ${{ secrets.SITE_DOMAIN }}
         run: go test -v ./...
