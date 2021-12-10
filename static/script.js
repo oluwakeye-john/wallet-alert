@@ -185,7 +185,7 @@
       if (error) {
         updateToast(error);
       } else {
-        updateToast("Success", true);
+        updateToast("Subscription successful.", true);
       }
     } catch (err) {
       updateToast(err);

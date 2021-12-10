@@ -222,3 +222,11 @@ option {
   letter-spacing: 1.2px;
   pointer-events: none;
 }
+
+.badge {
+  background-color: var(--primary);
+  border-radius: 20px;
+  font-size: 0.7rem;
+  padding: 0.3rem 1rem;
+  margin-left: 1rem;
+}
