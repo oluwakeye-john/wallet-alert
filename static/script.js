@@ -117,7 +117,7 @@
 
   window.addEventListener("load", () => {
     anime({
-      targets: ".title, .subtitle, .form-1",
+      targets: ".title, .subtitle, .list, .form-1",
       translateY: [80, 0],
       opacity: [0, 1],
       easing: "spring",

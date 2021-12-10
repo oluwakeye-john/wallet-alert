@@ -74,6 +74,12 @@ input {
   font-family: "Fuzzy Bubbles", cursive;
 }
 
+.logo {
+  width: 50px;
+  height: 50px;
+  vertical-align: middle;
+}
+
 .input-container {
   display: flex;
   overflow: hidden;
@@ -160,6 +166,7 @@ option {
 .title,
 .subtitle,
 .form-1,
+.list,
 .form-2 {
   opacity: 0;
 }
@@ -199,8 +206,7 @@ option {
 @media (max-width: 768px) {
   .navbar {
     position: unset;
-    padding: 0 2rem;
-    padding-top: 2rem;
+    padding: 2rem 2rem;
   }
 
   .owner {
@@ -229,4 +235,26 @@ option {
   font-size: 0.7rem;
   padding: 0.3rem 1rem;
   margin-left: 1rem;
+}
+
+.list {
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-item {
+  width: 30%;
+  display: inline-block;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .list {
+    flex-direction: column;
+  }
+
+  .list-item {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
 }
