@@ -14,7 +14,8 @@ body {
   --white: #fff;
   --bg-color: #020e18;
   /* --primary: #ffd400; */
-  --primary: #17bd70;
+  /* --primary: #17bd70; */
+  --primary: #04a74e;
   --error: #fb5151;
 }
 
