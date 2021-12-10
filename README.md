@@ -21,13 +21,17 @@ Get notified(via email) when a transaction occurs in your wallet address.
 - Postgres
 - Mailtrap
 
+## Screenshots
+
+![Omoo](static/images/screenshot1.png)
+
 ## Online Demo
 
-- https://wallet-alert.herokuapp.com
+https://wallet-alert.herokuapp.com
 
 ## Running locally
 
-### Clone the repo and download dependencies
+#### Clone the repo and download dependencies
 
 ```
 git clone https://github.com/oluwakeye-john/wallet-alert.git
@@ -35,13 +39,13 @@ cd wallet-alert
 go mod tidy
 ```
 
-### Create a `.env` file and populate it, using the `.env.example` file as a reference
+#### Create a `.env` file and populate it, using the `.env.example` file as a reference
 
 ```
 touch .env
 ```
 
-Start the project
+#### Start the project
 
 ```
 make dev
