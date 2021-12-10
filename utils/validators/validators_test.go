@@ -47,7 +47,7 @@ var test_cases = []Test{
 		want:      false,
 	},
 
-	// ETH
+	// DOGE
 	{
 		input:     "DLCDJhnh6aGotar6b182jpzbNEyXb3C361", // eth
 		validator: VerifyDOGEAddress,
