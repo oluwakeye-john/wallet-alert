@@ -23,7 +23,8 @@ Get notified(via email) when a transaction occurs in your wallet address.
 
 ## Screenshots
 
-![Omoo](static/images/screenshot1.png)
+![image](https://user-images.githubusercontent.com/43508135/145659869-d175992c-569d-45d0-8668-b73def058ed5.png)
+
 
 ## Online Demo
 
